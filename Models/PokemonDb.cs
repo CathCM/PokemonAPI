@@ -5,7 +5,7 @@ public class PokemonDb : DbContext
     public PokemonDb(DbContextOptions <PokemonDb> options) : base(options) {
         
      }
-    public DbSet<PokemonDao> PokemonDao { get; set; } = null!;
-    public DbSet<AbilityDao> AbilityDao { get; set; } = null!;
-    public DbSet<TypeDao> TypeDao { get; set; } = null!;
+    public DbSet<PokemonDao> Pokemons { get; set; } = null!;
+    public DbSet<AbilityDao> Ability{ get; set; } = null!;
+    public DbSet<TypeDao> Type { get; set; } = null!;
 }

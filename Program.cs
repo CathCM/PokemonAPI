@@ -18,6 +18,7 @@ static string GetDatabasePath(WebApplicationBuilder builder, string apiFolderNam
 }
 var pokemonApiPath = Path.Combine(GetDatabasePath(builder,"PokemonAPI"), "PokemonDb.db");
 var connectionString = builder.Configuration.GetConnectionString(pokemonApiPath) ?? $"Data Source={pokemonApiPath}";
+builder.Services.AddSqlite<PokemonDb>(connectionString);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
