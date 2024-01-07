@@ -6,7 +6,18 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+static string GetDatabasePath(WebApplicationBuilder builder, string apiFolderName) {
+    string commonAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+    string apiFolder = Path.Combine(commonAppDataPath, apiFolderName);
+    if (!Directory.Exists(apiFolder))
+    { 
+        Directory.CreateDirectory(apiFolder);
+    }
+    return apiFolder;
 
+}
+var pokemonApiPath = Path.Combine(GetDatabasePath(builder,"PokemonAPI"), "PokemonDb.db");
+var connectionString = builder.Configuration.GetConnectionString(pokemonApiPath) ?? $"Data Source={pokemonApiPath}";
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
