@@ -6,4 +6,5 @@ public class TypeDao
 {
     [Key]
     public string Name { get; set; }
+    public List<PokemonDao> Pokemons { get; } = new();
 }

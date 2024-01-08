@@ -49,6 +49,66 @@ namespace PokemonAPI.Migrations
 
                     b.ToTable("Type");
                 });
+
+            modelBuilder.Entity("PokemonAbilities", b =>
+                {
+                    b.Property<string>("AbilitiesName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("PokemonsId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("AbilitiesName", "PokemonsId");
+
+                    b.HasIndex("PokemonsId");
+
+                    b.ToTable("PokemonAbilities");
+                });
+
+            modelBuilder.Entity("PokemonTypes", b =>
+                {
+                    b.Property<int>("PokemonsId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("TypesName")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("PokemonsId", "TypesName");
+
+                    b.HasIndex("TypesName");
+
+                    b.ToTable("PokemonTypes");
+                });
+
+            modelBuilder.Entity("PokemonAbilities", b =>
+                {
+                    b.HasOne("PokemonAPI.Models.AbilityDao", null)
+                        .WithMany()
+                        .HasForeignKey("AbilitiesName")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PokemonAPI.Models.PokemonDao", null)
+                        .WithMany()
+                        .HasForeignKey("PokemonsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PokemonTypes", b =>
+                {
+                    b.HasOne("PokemonAPI.Models.PokemonDao", null)
+                        .WithMany()
+                        .HasForeignKey("PokemonsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PokemonAPI.Models.TypeDao", null)
+                        .WithMany()
+                        .HasForeignKey("TypesName")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
 #pragma warning restore 612, 618
         }
     }
