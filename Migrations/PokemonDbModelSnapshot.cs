@@ -37,7 +37,7 @@ namespace PokemonAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Pokemonn");
+                    b.ToTable("Pokemon");
                 });
 
             modelBuilder.Entity("PokemonAPI.Models.TypeDao", b =>

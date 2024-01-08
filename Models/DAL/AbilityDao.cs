@@ -5,4 +5,6 @@ public class AbilityDao
 {
     [Key]
     public string Name { get; set; }
+    // public List<PokemonDao> PokemonsByAbility { get; } = new();
+    // public List<PokemonAbilityDao> PokemonAbilities { get; } = new();
 }
