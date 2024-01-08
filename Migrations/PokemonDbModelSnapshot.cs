@@ -23,6 +23,12 @@ namespace PokemonAPI.Migrations
                     b.HasKey("Name");
 
                     b.ToTable("Ability");
+
+                    b.HasData(
+                        new
+                        {
+                            Name = "Ability Test"
+                        });
                 });
 
             modelBuilder.Entity("PokemonAPI.Models.PokemonDao", b =>
@@ -38,6 +44,13 @@ namespace PokemonAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Pokemon");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Pokemon Test"
+                        });
                 });
 
             modelBuilder.Entity("PokemonAPI.Models.TypeDao", b =>
@@ -52,17 +65,24 @@ namespace PokemonAPI.Migrations
 
             modelBuilder.Entity("PokemonAbilities", b =>
                 {
-                    b.Property<string>("AbilitiesName")
+                    b.Property<string>("AbilityName")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("PokemonsId")
+                    b.Property<int>("PokemonId")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("AbilitiesName", "PokemonsId");
+                    b.HasKey("AbilityName", "PokemonId");
 
-                    b.HasIndex("PokemonsId");
+                    b.HasIndex("PokemonId");
 
                     b.ToTable("PokemonAbilities");
+
+                    b.HasData(
+                        new
+                        {
+                            AbilityName = "Ability Test",
+                            PokemonId = 1
+                        });
                 });
 
             modelBuilder.Entity("PokemonTypes", b =>
@@ -84,13 +104,13 @@ namespace PokemonAPI.Migrations
                 {
                     b.HasOne("PokemonAPI.Models.AbilityDao", null)
                         .WithMany()
-                        .HasForeignKey("AbilitiesName")
+                        .HasForeignKey("AbilityName")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PokemonAPI.Models.PokemonDao", null)
                         .WithMany()
-                        .HasForeignKey("PokemonsId")
+                        .HasForeignKey("PokemonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
