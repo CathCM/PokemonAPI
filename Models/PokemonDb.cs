@@ -25,16 +25,34 @@ public class PokemonDb : DbContext
                         new { AbilityName = "Ability Test", PokemonId = 1 }
                     );
                 });
-
+        
         modelBuilder.Entity<PokemonDao>()
         .HasMany(e => e.Types)
         .WithMany(e => e.Pokemons)
-        .UsingEntity("PokemonTypes");
+        .UsingEntity <Dictionary<string, object>>("PokemonTypes", 
+            r=> r.HasOne<TypeDao>().WithMany().HasForeignKey("TypesName"),
+            l => l.HasOne<PokemonDao>().WithMany().HasForeignKey("PokemonId"),
+            je =>
+        {
+            je.HasKey("PokemonId", "TypesName");
+            je.HasData(
+                new { PokemonId = 1, TypesName = "Type Test" }
+            );
+        });
+        
+        
         modelBuilder.Entity<PokemonDao>().HasData(
             new PokemonDao
             {
                 Id = 1,
-                Name = "Pokemon Test"
+                Name = "Pokemon Test",
+                Hp = 20,
+                Defense = 35,
+                Attack = 32,
+                SpecialAttack = 51,
+                SpecialDefense = 40,
+                Speed = 15,
+                
             }
             );
         modelBuilder.Entity<AbilityDao>().HasData(
@@ -42,6 +60,12 @@ public class PokemonDb : DbContext
                 {
                     Name = "Ability Test"
                 }
+        );
+        modelBuilder.Entity<TypeDao>().HasData(
+            new TypeDao()
+            {
+                Name = "Type Test"
+            }
         );
 
     }
