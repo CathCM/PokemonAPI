@@ -33,26 +33,26 @@ namespace PokemonAPI.Migrations
 
             modelBuilder.Entity("PokemonAPI.Models.PokemonAbilityDao", b =>
                 {
-                    b.Property<string>("AbilityName")
-                        .HasColumnType("TEXT");
-
                     b.Property<int>("PokemonId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("AbilityName")
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("IsHidden")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("AbilityName", "PokemonId");
+                    b.HasKey("PokemonId", "AbilityName");
 
-                    b.HasIndex("PokemonId");
+                    b.HasIndex("AbilityName");
 
                     b.ToTable("PokemonAbility");
 
                     b.HasData(
                         new
                         {
-                            AbilityName = "Ability Test",
                             PokemonId = 1,
+                            AbilityName = "Ability Test",
                             IsHidden = false
                         });
                 });

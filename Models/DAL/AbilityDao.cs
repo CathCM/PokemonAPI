@@ -5,6 +5,6 @@ public class AbilityDao
 {
     [Key]
     public string Name { get; set; }
-    public List<PokemonDao> Pokemons { get; } = new();
+    // public List<PokemonDao> Pokemons { get; } = new();
     public List<PokemonAbilityDao> PokemonAbility { get; } = new();
 }

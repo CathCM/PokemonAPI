@@ -27,18 +27,24 @@ public class PokemonDb : DbContext
         //                 new { AbilityName = "Ability Test", PokemonId = 1 }
         //             );
         //         });
-
+        modelBuilder.Entity<PokemonAbilityDao>().HasKey(p => new {p.PokemonId, p.AbilityName});
         modelBuilder.Entity<PokemonDao>()
-            .HasMany(e => e.Abilities)
-            .WithMany(e => e.Pokemons)
-            .UsingEntity<PokemonAbilityDao>(
-                l => l.HasOne<AbilityDao>()
-                    .WithMany(p => p.PokemonAbility)
-                    .HasForeignKey(x => x.AbilityName),
-                r => r.HasOne<PokemonDao>()
-                    .WithMany(p => p.PokemonAbility)
-                    .HasForeignKey(x => x.PokemonId)
-            );
+            .HasMany(e => e.PokemonAbility)
+            .WithOne()
+            .HasForeignKey(k => k.PokemonId);
+        modelBuilder.Entity<AbilityDao>()
+            .HasMany(e => e.PokemonAbility)
+            .WithOne()
+            .HasForeignKey(k => k.AbilityName);
+
+            // .UsingEntity<PokemonAbilityDao>(
+            //     l => l.HasOne<AbilityDao>()
+            //         .WithMany(p => p.PokemonAbility)
+            //         .HasForeignKey(x => x.AbilityName),
+            //     r => r.HasOne<PokemonDao>()
+            //         .WithMany(p => p.PokemonAbility)
+            //         .HasForeignKey(x => x.PokemonId)
+            // );
 
 
         modelBuilder.Entity<PokemonDao>()
