@@ -14,19 +14,7 @@ public class PokemonDb : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // modelBuilder.Entity<PokemonDao>()
-        //     .HasMany(e => e.Abilities)
-        //     .WithMany(e => e.Pokemons)
-        //     .UsingEntity<Dictionary<string, object>>("PokemonAbilities",
-        //         r => r.HasOne<AbilityDao>().WithMany().HasForeignKey("AbilityName"),
-        //         l => l.HasOne<PokemonDao>().WithMany().HasForeignKey("PokemonId"),
-        //         je =>
-        //         {
-        //             je.HasKey("AbilityName", "PokemonId");
-        //             je.HasData(
-        //                 new { AbilityName = "Ability Test", PokemonId = 1 }
-        //             );
-        //         });
+
         modelBuilder.Entity<PokemonAbilityDao>().HasKey(p => new {p.PokemonId, p.AbilityName});
         modelBuilder.Entity<PokemonDao>()
             .HasMany(e => e.PokemonAbility)
@@ -36,16 +24,6 @@ public class PokemonDb : DbContext
             .HasMany(e => e.PokemonAbility)
             .WithOne()
             .HasForeignKey(k => k.AbilityName);
-
-            // .UsingEntity<PokemonAbilityDao>(
-            //     l => l.HasOne<AbilityDao>()
-            //         .WithMany(p => p.PokemonAbility)
-            //         .HasForeignKey(x => x.AbilityName),
-            //     r => r.HasOne<PokemonDao>()
-            //         .WithMany(p => p.PokemonAbility)
-            //         .HasForeignKey(x => x.PokemonId)
-            // );
-
 
         modelBuilder.Entity<PokemonDao>()
             .HasMany(e => e.Types)
@@ -60,7 +38,6 @@ public class PokemonDb : DbContext
                         new { PokemonId = 1, TypesName = "Type Test" }
                     );
                 });
-
 
         modelBuilder.Entity<PokemonDao>().HasData(
             new PokemonDao

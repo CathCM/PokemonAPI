@@ -1,14 +1,22 @@
 using Microsoft.AspNetCore.Mvc;
 using PokemonAPI.Models;
+using PokemonAPI.Services;
+
 namespace PokemonAPI.Controllers;
 [ApiController]
 [Route("pokemon")]
 
 public class PokemonController : ControllerBase
 {
+    private readonly PokemonService _pokemonService;
+    
+    public PokemonController(PokemonService pokemonService)
+    {
+        _pokemonService = pokemonService;
+    }
     //··········GET············
     [HttpGet]
-    public ActionResult<List<Pokemon>> GetAllPokemon() => new List<Pokemon>();
+    public ActionResult<List<Pokemon>> GetAllPokemon() => _pokemonService.GetAllPokemon();
 
     [HttpGet("{id}")]
     public ActionResult<Pokemon> GetPokemonById(int id) => new Pokemon();

@@ -17,8 +17,8 @@ public class TestController : ControllerBase
 
     [HttpGet]
     public ActionResult<List<PokemonDao>> GetAllPokemonDao() => dbContext.Pokemon.Include(p => p.PokemonAbility)
-        .Include(pokemon => pokemon.Types).ToList();
-
+        .Include(pokemon => pokemon.Types).ToList()
+;
     [HttpGet("{id}")]
     public ActionResult<PokemonDao> GetPokemonByIdDao(int id) => dbContext.Pokemon.FirstOrDefault(x => x.Id == id);
 }
