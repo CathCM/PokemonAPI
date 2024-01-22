@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace PokemonAPI.Migrations
 {
     [DbContext(typeof(PokemonDb))]
-    [Migration("20240116163140_NewSeedData")]
+    [Migration("20240122162936_NewSeedData")]
     partial class NewSeedData
     {
         /// <inheritdoc />
@@ -30,7 +30,15 @@ namespace PokemonAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Name = "Ability Test"
+                            Name = "Torrent"
+                        },
+                        new
+                        {
+                            Name = "Blaze"
+                        },
+                        new
+                        {
+                            Name = "Keen Eye"
                         });
                 });
 
@@ -54,9 +62,21 @@ namespace PokemonAPI.Migrations
                     b.HasData(
                         new
                         {
-                            PokemonId = 123,
-                            AbilityName = "Ability Test",
+                            PokemonId = 1,
+                            AbilityName = "Torrent",
                             IsHidden = false
+                        },
+                        new
+                        {
+                            PokemonId = 2,
+                            AbilityName = "Blaze",
+                            IsHidden = false
+                        },
+                        new
+                        {
+                            PokemonId = 3,
+                            AbilityName = "Keen Eye",
+                            IsHidden = true
                         });
                 });
 
@@ -95,25 +115,36 @@ namespace PokemonAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 123,
-                            Attack = 32,
-                            Defense = 35,
-                            Hp = 20,
-                            Name = "Pokemon Test",
-                            SpecialAttack = 51,
-                            SpecialDefense = 40,
-                            Speed = 15
+                            Id = 1,
+                            Attack = 48,
+                            Defense = 65,
+                            Hp = 44,
+                            Name = "Squirtle",
+                            SpecialAttack = 50,
+                            SpecialDefense = 64,
+                            Speed = 43
                         },
                         new
                         {
-                            Id = 13,
-                            Attack = 26,
-                            Defense = 65,
-                            Hp = 63,
-                            Name = "Pokemoncito",
-                            SpecialAttack = 31,
-                            SpecialDefense = 20,
-                            Speed = 200
+                            Id = 2,
+                            Attack = 52,
+                            Defense = 43,
+                            Hp = 39,
+                            Name = "Charmander",
+                            SpecialAttack = 60,
+                            SpecialDefense = 50,
+                            Speed = 65
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Attack = 45,
+                            Defense = 40,
+                            Hp = 40,
+                            Name = "Pidgey",
+                            SpecialAttack = 35,
+                            SpecialDefense = 35,
+                            Speed = 56
                         });
                 });
 
@@ -129,7 +160,15 @@ namespace PokemonAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Name = "Type Test"
+                            Name = "Water"
+                        },
+                        new
+                        {
+                            Name = "Fire"
+                        },
+                        new
+                        {
+                            Name = "Flying"
                         });
                 });
 
@@ -151,7 +190,17 @@ namespace PokemonAPI.Migrations
                         new
                         {
                             PokemonId = 1,
-                            TypesName = "Type Test"
+                            TypesName = "Water"
+                        },
+                        new
+                        {
+                            PokemonId = 1,
+                            TypesName = "Flying"
+                        },
+                        new
+                        {
+                            PokemonId = 2,
+                            TypesName = "Fire"
                         });
                 });
 
