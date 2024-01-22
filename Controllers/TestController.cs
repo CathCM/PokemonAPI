@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PokemonAPI.Models;
+using PokemonAPI.Services;
 
 namespace PokemonAPI.Controllers;
 
@@ -9,16 +10,41 @@ namespace PokemonAPI.Controllers;
 public class TestController : ControllerBase
 {
     private readonly PokemonDb dbContext;
+    private readonly PokemonService pokemonService;
 
-    public TestController(PokemonDb dbContext)
+    public TestController(PokemonDb dbContext, PokemonService pokemonService)
     {
         this.dbContext = dbContext;
+        this.pokemonService = pokemonService;
     }
 
     [HttpGet]
-    public ActionResult<List<PokemonDao>> GetAllPokemonDao() => dbContext.Pokemon.Include(p => p.PokemonAbility)
-        .Include(pokemon => pokemon.Types).ToList()
-;
+    public async Task<ActionResult<List<Pokemon>>> GetAllPokemon(CancellationToken token) => await pokemonService.GetAll(token);
+
     [HttpGet("{id}")]
-    public ActionResult<PokemonDao> GetPokemonByIdDao(int id) => dbContext.Pokemon.FirstOrDefault(x => x.Id == id);
+    public async Task<ActionResult<Pokemon>> GetPokemonById(int id, CancellationToken token)
+    {
+        var pokemon = await dbContext.Pokemon
+            .Include(p => p.Types)
+            .Include(p => p.PokemonAbility)
+            .FirstOrDefaultAsync(x => x.Id == id, token);
+
+        if (pokemon == null)
+        {
+            return NotFound();
+        }
+
+        Pokemon mappedPokemon = pokemonService.MappingToPokemon(pokemon);
+
+        return mappedPokemon;
+    }
+    
+    [HttpPost]
+    public async Task<ActionResult<PokemonDao>> CreatePokemon(PokemonDao pokemon)
+    {
+        dbContext.Pokemon.Add(pokemon);
+        await dbContext.SaveChangesAsync();
+
+        return CreatedAtAction("GetPokemonById", new { id = pokemon.Id }, pokemon);
+    }
 }

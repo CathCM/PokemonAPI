@@ -85,7 +85,8 @@ namespace PokemonAPI.Migrations
                 {
                     { 1, "Flying" },
                     { 1, "Water" },
-                    { 2, "Fire" }
+                    { 2, "Fire" },
+                    { 3, "Flying" }
                 });
         }
 
