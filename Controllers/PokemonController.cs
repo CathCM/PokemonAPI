@@ -37,6 +37,14 @@ public class PokemonController : ControllerBase
         return pokemon;
     }
 
+    [HttpGet("name")]
+    public async Task<ActionResult<List<string>>> GetNames(CancellationToken token)
+    {
+        List<string> pokemonNames = await pokemonService.GetNames(token);
+        return (pokemonNames == null || pokemonNames.Count == 0) ? NotFound() : pokemonNames;
+    }
+    
+    
     [HttpGet("name/{name}")]
     public async Task<ActionResult<Pokemon>> GetPokemonByName(string name, CancellationToken token)
     {
@@ -61,8 +69,7 @@ public class PokemonController : ControllerBase
 //         return CreatedAtAction("GetPokemonById", new { id = pokemon.Id }, pokemon);
 //     }
 //
-//     [HttpGet("name")]
-//     public ActionResult<List<string>> GetNames() => new List<string>();
+     
 //
 //     
 //     [HttpGet("{id}/ability")]

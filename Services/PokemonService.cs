@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PokemonAPI.Models;
 
@@ -38,6 +39,13 @@ public class PokemonService : IPokemonService
         return mappedPokemon;
     }
 
+    public async Task<List<string>> GetNames(CancellationToken token)
+    {
+        var pokemonDaoList = await GetAll(token);
+        List<string> pokemonNames = pokemonDaoList.Select(x => x.Name).ToList();
+        return pokemonNames;
+
+    }
     public async Task<Pokemon> GetByName(string name, CancellationToken token)
     {
         PokemonDao? pokemon = await dbContext.Pokemon
