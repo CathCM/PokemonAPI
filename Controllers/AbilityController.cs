@@ -20,7 +20,12 @@ public class AbilityController : ControllerBase
     public async Task<ActionResult<List<string>>> GetAllAbilities(CancellationToken token) => await abilityService.GetAll(token);
 
     [HttpGet("ability/{abilities}")]
-    // public ActionResult<List<Pokemon>> GetPokemonsByAbility([FromRoute] List<string> abilities, CancellationToken token) => GetAll(token);
+    public async Task<ActionResult<List<Pokemon>>> GetPokemonsByAbility([FromRoute] List<string> abilities, CancellationToken token)
+    {
+        List<Pokemon> pokemons = await abilityService.GetAllByAbility(abilities, token);
+        return (pokemons == null || pokemons.Count == 0) ? NoContent() : Ok(pokemons);
+    }
+    
     // GET /ability/{ab1}/{ab2}
 
     [HttpPost]

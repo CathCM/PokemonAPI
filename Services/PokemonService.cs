@@ -25,7 +25,7 @@ public class PokemonService : IPokemonService
     {
         List<PokemonDao> pokemonDao = await dbContext.Pokemon
             .Include(p => p.PokemonAbility)
-            .Include(pokemon => pokemon.Types)
+            .Include(p => p.Types)
             .ToListAsync(token);
 
         List<Pokemon> pokemonList = pokemonDao.Select(pokemon => MappingToPokemon(pokemon)).ToList();
