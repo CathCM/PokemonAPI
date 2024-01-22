@@ -42,7 +42,7 @@ public class PokemonDb : DbContext
         modelBuilder.Entity<PokemonDao>().HasData(
             new PokemonDao
             {
-                Id = 1,
+                Id = 123,
                 Name = "Pokemon Test",
                 Hp = 20,
                 Defense = 35,
@@ -50,6 +50,17 @@ public class PokemonDb : DbContext
                 SpecialAttack = 51,
                 SpecialDefense = 40,
                 Speed = 15,
+            },
+            new PokemonDao
+            {
+                Id = 13,
+                Name = "Pokemoncito",
+                Hp = 63,
+                Defense = 65,
+                Attack = 26,
+                SpecialAttack = 31,
+                SpecialDefense = 20,
+                Speed = 200,
             }
         );
         modelBuilder.Entity<AbilityDao>().HasData(
@@ -67,7 +78,7 @@ public class PokemonDb : DbContext
         modelBuilder.Entity<PokemonAbilityDao>().HasData(
             new PokemonAbilityDao()
             {
-                PokemonId = 1,
+                PokemonId = 123,
                 AbilityName = "Ability Test",
                 IsHidden = false
             }

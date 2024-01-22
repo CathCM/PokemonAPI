@@ -16,7 +16,7 @@ public class PokemonController : ControllerBase
     }
     //··········GET············
     [HttpGet]
-    public ActionResult<List<Pokemon>> GetAllPokemon() => _pokemonService.GetAllPokemon();
+    public async Task<ActionResult<List<Pokemon>>> GetAllPokemon(CancellationToken token) => await _pokemonService.GetAll(token);
 
     [HttpGet("{id}")]
     public ActionResult<Pokemon> GetPokemonById(int id) => new Pokemon();

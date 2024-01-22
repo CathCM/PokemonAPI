@@ -4,7 +4,7 @@ using PokemonAPI.Models;
 
 namespace PokemonAPI.Services;
 
-public class PokemonService
+public class PokemonService : IPokemonService
 {
     private readonly IMapper mapper;
     private readonly PokemonDb dbContext;
@@ -15,22 +15,16 @@ public class PokemonService
         this.dbContext = dbContext;
 
     }
-
-    // public List<PokemonDao> GetAllPokemonDao() => dbContext.Pokemon.Include(p => p.PokemonAbility)
-    //     .Include(pokemon => pokemon.Types).ToList();
     public Pokemon MappingToPokemon(PokemonDao pokemon) => mapper.Map<Pokemon>(pokemon);
     
-    public List<Pokemon> GetAllPokemon()
+    public async Task<List<Pokemon>> GetAll(CancellationToken token)
     {
-        List<PokemonDao> pokemonDao = dbContext.Pokemon.Include(p => p.PokemonAbility)
-            .Include(pokemon => pokemon.Types).ToList();
+        List<PokemonDao> pokemonDao = await dbContext.Pokemon
+            .Include(p => p.PokemonAbility)
+            .Include(pokemon => pokemon.Types)
+            .ToListAsync(token);
 
         List<Pokemon> pokemonList = pokemonDao.Select(pokemon => MappingToPokemon(pokemon)).ToList();
         return pokemonList;
-        
     }
-    
-    
-    
-    
 }
