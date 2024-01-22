@@ -1,4 +1,6 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PokemonAPI.Models;
 
@@ -16,7 +18,9 @@ public class PokemonService : IPokemonService
 
     }
     private Pokemon MappingToPokemon(PokemonDao pokemon) => mapper.Map<Pokemon>(pokemon);
-    
+    private PokemonDao MappingToPokemonDao(Pokemon pokemon) => mapper.Map<PokemonDao>(pokemon);
+
+    //··········GET············
     public async Task<List<Pokemon>> GetAll(CancellationToken token)
     {
         List<PokemonDao> pokemonDao = await dbContext.Pokemon
@@ -55,7 +59,7 @@ public class PokemonService : IPokemonService
         return mappedPokemon;
     }
 
-    public async Task<List<PokemonAbility>> GetAbilities(int id, CancellationToken token) // Maybe I can add only an abilities list
+    public async Task<List<PokemonAbility>> GetAbilities(int id, CancellationToken token) 
     {
         Pokemon pokemon = await GetById(id, token);
         var pokemonAbilities = pokemon.Abilities.ToList();
@@ -67,4 +71,14 @@ public class PokemonService : IPokemonService
         List<PokemonStat> pokemonStats = pokemon.Stats.ToList();
         return pokemonStats;
     }
+    public async Task<List<string>> GetType(int id, CancellationToken token)
+    {
+        var pokemon = await GetById(id, token);
+        List<string> types = pokemon.Types.Select(x => x.Name).ToList();
+        return types;
+    }
+    
+    //··········POST············
+    
+    
 }

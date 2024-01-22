@@ -6,7 +6,7 @@ public class Pokemon
     public string Name { get; set; }
     public List<PokemonAbility> Abilities { get; set; }
     public List<PokemonStat> Stats { get; set; }
-    public List<string> Types { get; set; }
+    public List<Types> Types { get; set; }
 }
 
 

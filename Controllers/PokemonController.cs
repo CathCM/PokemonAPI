@@ -12,7 +12,15 @@ public class PokemonController : ControllerBase
 {
     private readonly PokemonService pokemonService;
     private readonly PokemonDb dbContext;
-
+    private IActionResult CheckResponseNoContent<T>(List<T> response)
+    {
+        return (response == null || response.Count == 0) ? (IActionResult) NoContent() : Ok(response);
+    }
+    private IActionResult CheckResponseNotFound<T>(List<T> response)
+    {
+        return (response == null || response.Count == 0) ? (IActionResult) NotFound() : Ok(response);
+    }
+    
     public PokemonController(PokemonDb dbContext, PokemonService pokemonService)
     {
         this.pokemonService = pokemonService;
@@ -28,17 +36,11 @@ public class PokemonController : ControllerBase
     public async Task<ActionResult<Pokemon>> GetPokemonById(int id, CancellationToken token)
     {
         var pokemon = await pokemonService.GetById(id, token);
-
-        if (pokemon == null)
-        {
-            return NotFound();
-        }
-
-        return Ok(pokemon);
+        return (pokemon == null) ? NotFound() : Ok(pokemon);
     }
 
     [HttpGet("name")]
-    public async Task<ActionResult<List<string>>> GetNames(CancellationToken token)
+    public async Task<ActionResult<List<string>>> GetPokemonNames(CancellationToken token)
     {
         List<string> pokemonNames = await pokemonService.GetNames(token);
         return (pokemonNames == null || pokemonNames.Count == 0) ? NoContent() : Ok(pokemonNames);
@@ -55,7 +57,7 @@ public class PokemonController : ControllerBase
     }
 
     [HttpGet("{id}/ability")]
-    public async Task<ActionResult<List<PokemonAbility>>> GetAbilities(int id, CancellationToken token)
+    public async Task<ActionResult<List<PokemonAbility>>> GetPokemonAbilities(int id, CancellationToken token)
     {
         List<PokemonAbility> abilities = await pokemonService.GetAbilities(id, token);
         return (abilities == null || abilities.Count == 0) ? NoContent() : Ok(abilities);
@@ -63,26 +65,37 @@ public class PokemonController : ControllerBase
 
 
     [HttpGet("{id}/stats")]
-    public async Task<ActionResult<List<PokemonStat>>> GetStats(int id, CancellationToken token)
+    public async Task<ActionResult<List<PokemonStat>>> GetPokemonStats(int id, CancellationToken token)
     {
         List<PokemonStat> stats = await pokemonService.GetStats(id, token);
         return (stats == null || stats.Count == 0) ? NoContent() : Ok(stats);
     }
 
-} //
-//     [HttpGet("{id}/type")]
-//     public ActionResult<List<string>> GetTypes() => new List<string>();
-//
+    [HttpGet("{id}/type")]
+    public async Task<ActionResult<List<string>>> GetPokemonType(int id, CancellationToken token)
+    {
+        List<string> types = await pokemonService.GetType(id, token);
+        return (types == null || types.Count == 0) ? NoContent() : Ok(types);
+    }
+
 //     //··········POST············
 //
-//     [HttpPost]
-//     public async Task<ActionResult<PokemonDao>> CreatePokemon(PokemonDao pokemon)
-//     {
-//         dbContext.Pokemon.Add(pokemon);
-//         await dbContext.SaveChangesAsync();
-//
-//         return CreatedAtAction("GetPokemonById", new { id = pokemon.Id }, pokemon);
-//     }
+    // [HttpPost]
+    // public async Task<ActionResult<Pokemon>> CreatePokemon([FromBody] PokemonDao pokemon, CancellationToken token)
+    // {
+    //     dbContext.Pokemon.Add(pokemon);
+    //     await dbContext.SaveChangesAsync(token);
+    //
+    //     await dbContext.Entry(pokemon)
+    //         .Reference(p => p.Types)
+    //         .LoadAsync(token);
+    //
+    //     await dbContext.Entry(pokemon)
+    //         .Collection(p => p.PokemonAbility)
+    //         .LoadAsync(token);
+    //
+    //     return CreatedAtAction("GetPokemonById", new { id = pokemon.Id }, pokemon);
+    // }
 //
      
 //
@@ -125,4 +138,4 @@ public class PokemonController : ControllerBase
 //     public ActionResult DeleteType(int id, string type) => Ok();
 //
 //
-// }
+}

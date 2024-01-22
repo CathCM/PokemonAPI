@@ -24,6 +24,9 @@ public class PokemonMapperProfile : Profile
                 new PokemonStat() { Name = "SpecialDefense", BaseStat = src.SpecialDefense },
                 new PokemonStat() { Name = "Speed", BaseStat = src.Speed },
             }))
-            .ForMember(dm => dm.Types, opt => opt.MapFrom(src => src.Types.Select(e => e.Name).ToList()));
+            .ForMember(dm => dm.Types, opt => opt.MapFrom(src => src.Types.Select(e => new Types
+            {
+                Name = e.Name
+            }).ToList()));
     }
 }

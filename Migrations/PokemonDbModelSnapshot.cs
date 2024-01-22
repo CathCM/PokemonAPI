@@ -22,7 +22,7 @@ namespace PokemonAPI.Migrations
 
                     b.HasKey("Name");
 
-                    b.ToTable("Ability");
+                    b.ToTable("Ability", (string)null);
 
                     b.HasData(
                         new
@@ -54,7 +54,7 @@ namespace PokemonAPI.Migrations
 
                     b.HasIndex("AbilityName");
 
-                    b.ToTable("PokemonAbility");
+                    b.ToTable("PokemonAbility", (string)null);
 
                     b.HasData(
                         new
@@ -107,7 +107,7 @@ namespace PokemonAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Pokemon");
+                    b.ToTable("Pokemon", (string)null);
 
                     b.HasData(
                         new
@@ -152,7 +152,7 @@ namespace PokemonAPI.Migrations
 
                     b.HasKey("Name");
 
-                    b.ToTable("Type");
+                    b.ToTable("Type", (string)null);
 
                     b.HasData(
                         new
@@ -181,7 +181,7 @@ namespace PokemonAPI.Migrations
 
                     b.HasIndex("TypesName");
 
-                    b.ToTable("PokemonTypes");
+                    b.ToTable("PokemonTypes", (string)null);
 
                     b.HasData(
                         new
