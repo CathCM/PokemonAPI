@@ -23,24 +23,33 @@ public class PokemonController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<Pokemon>>> GetAllPokemon(CancellationToken token) =>
         await pokemonService.GetAll(token);
-
+    
     [HttpGet("{id}")]
     public async Task<ActionResult<Pokemon>> GetPokemonById(int id, CancellationToken token)
     {
-        var pokemon = await dbContext.Pokemon
-            .Include(p => p.Types)
-            .Include(p => p.PokemonAbility)
-            .FirstOrDefaultAsync(x => x.Id == id, token);
+        var pokemon = await pokemonService.GetById(id, token);
 
         if (pokemon == null)
         {
             return NotFound();
         }
 
-        Pokemon mappedPokemon = pokemonService.MappingToPokemon(pokemon);
-
-        return mappedPokemon;
+        return pokemon;
     }
+
+    [HttpGet("name/{name}")]
+    public async Task<ActionResult<Pokemon>> GetPokemonByName(string name, CancellationToken token)
+    {
+        var pokemon = await pokemonService.GetByName(name, token);
+
+        if (pokemon == null)
+        {
+            return NotFound();
+        }
+
+        return pokemon;
+    }
+//
 }
 
 //     [HttpPost]
@@ -55,9 +64,7 @@ public class PokemonController : ControllerBase
 //     [HttpGet("name")]
 //     public ActionResult<List<string>> GetNames() => new List<string>();
 //
-//     [HttpGet("name/{name}")]
-//     public ActionResult<Pokemon> GetPokemonByName(string name) => new Pokemon();
-//
+//     
 //     [HttpGet("{id}/ability")]
 //     public ActionResult<List<PokemonAbility>> GetAbilities(int id) => new List<PokemonAbility>();
 //

@@ -30,10 +30,20 @@ public class PokemonService : IPokemonService
 
     public async Task<Pokemon> GetById(int id, CancellationToken token)
     {
-        var pokemon = await dbContext.Pokemon
+        PokemonDao? pokemon = await dbContext.Pokemon
             .Include(p => p.Types)
             .Include(p => p.PokemonAbility)
             .FirstOrDefaultAsync(x => x.Id == id, token);
+        Pokemon mappedPokemon = MappingToPokemon(pokemon);
+        return mappedPokemon;
+    }
+
+    public async Task<Pokemon> GetByName(string name, CancellationToken token)
+    {
+        PokemonDao? pokemon = await dbContext.Pokemon
+            .Include(p => p.Types)
+            .Include(p => p.PokemonAbility)
+            .FirstOrDefaultAsync(x => x.Name.ToLower() == name.ToLower(), token);
         Pokemon mappedPokemon = MappingToPokemon(pokemon);
         return mappedPokemon;
     }
