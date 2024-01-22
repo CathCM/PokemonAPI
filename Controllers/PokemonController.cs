@@ -23,7 +23,7 @@ public class PokemonController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<Pokemon>>> GetAllPokemon(CancellationToken token) =>
         await pokemonService.GetAll(token);
-    
+
     [HttpGet("{id}")]
     public async Task<ActionResult<Pokemon>> GetPokemonById(int id, CancellationToken token)
     {
@@ -34,32 +34,47 @@ public class PokemonController : ControllerBase
             return NotFound();
         }
 
-        return pokemon;
+        return Ok(pokemon);
     }
 
     [HttpGet("name")]
     public async Task<ActionResult<List<string>>> GetNames(CancellationToken token)
     {
         List<string> pokemonNames = await pokemonService.GetNames(token);
-        return (pokemonNames == null || pokemonNames.Count == 0) ? NotFound() : pokemonNames;
+        return (pokemonNames == null || pokemonNames.Count == 0) ? NoContent() : Ok(pokemonNames);
     }
-    
-    
+
+
     [HttpGet("name/{name}")]
     public async Task<ActionResult<Pokemon>> GetPokemonByName(string name, CancellationToken token)
     {
         var pokemon = await pokemonService.GetByName(name, token);
 
-        if (pokemon == null)
-        {
-            return NotFound();
-        }
-
-        return pokemon;
+        return (pokemon == null) ? NoContent() : Ok(pokemon);
+      
     }
-//
-}
 
+    [HttpGet("{id}/ability")]
+    public async Task<ActionResult<List<PokemonAbility>>> GetAbilities(int id, CancellationToken token)
+    {
+        List<PokemonAbility> abilities = await pokemonService.GetAbilities(id, token);
+        return (abilities == null || abilities.Count == 0) ? NoContent() : Ok(abilities);
+    }
+
+
+    [HttpGet("{id}/stats")]
+    public async Task<ActionResult<List<PokemonStat>>> GetStats(int id, CancellationToken token)
+    {
+        List<PokemonStat> stats = await pokemonService.GetStats(id, token);
+        return (stats == null || stats.Count == 0) ? NoContent() : Ok(stats);
+    }
+
+} //
+//     [HttpGet("{id}/type")]
+//     public ActionResult<List<string>> GetTypes() => new List<string>();
+//
+//     //··········POST············
+//
 //     [HttpPost]
 //     public async Task<ActionResult<PokemonDao>> CreatePokemon(PokemonDao pokemon)
 //     {
@@ -70,18 +85,6 @@ public class PokemonController : ControllerBase
 //     }
 //
      
-//
-//     
-//     [HttpGet("{id}/ability")]
-//     public ActionResult<List<PokemonAbility>> GetAbilities(int id) => new List<PokemonAbility>();
-//
-//     [HttpGet("{id}/stats")]
-//     public ActionResult<List<PokemonStat>> GetStats(int id) => new List<PokemonStat>();
-//
-//     [HttpGet("{id}/type")]
-//     public ActionResult<List<string>> GetTypes() => new List<string>();
-//
-//     //··········POST············
 //
 //     [HttpPost]
 //     public ActionResult Create([FromBody] Pokemon pokemonCreate) => Ok();
