@@ -32,6 +32,7 @@ var pokemonApiPath = Path.Combine(GetDatabasePath(builder,"PokemonAPI"), "Pokemo
 var connectionString = builder.Configuration.GetConnectionString(pokemonApiPath) ?? $"Data Source={pokemonApiPath}";
 builder.Services.AddSqlite<PokemonDb>(connectionString);
 builder.Services.AddScoped<PokemonService>();
+builder.Services.AddScoped<AbilityService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

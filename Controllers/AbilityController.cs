@@ -1,16 +1,26 @@
 using Microsoft.AspNetCore.Mvc;
 using PokemonAPI.Models;
+using PokemonAPI.Services;
+
 namespace PokemonAPI.Controllers;
 [ApiController]
 [Route("ability")]
 
 public class AbilityController : ControllerBase
 {
+    private readonly PokemonDb dbContext;
+    private readonly AbilityService abilityService;
+
+    public AbilityController(PokemonDb dbContext, AbilityService abilityService)
+    {
+        this.dbContext = dbContext;
+        this.abilityService = abilityService;
+    }
     [HttpGet]
-    public ActionResult<List<string>> GetAllAbilities() => new List<string>();
+    public async Task<ActionResult<List<string>>> GetAllAbilities(CancellationToken token) => await abilityService.GetAll(token);
 
     [HttpGet("ability/{abilities}")]
-    public ActionResult<List<Pokemon>> GetPokemonsByAbility([FromRoute] List<string> abilities) => new List<Pokemon>();
+    // public ActionResult<List<Pokemon>> GetPokemonsByAbility([FromRoute] List<string> abilities, CancellationToken token) => GetAll(token);
     // GET /ability/{ab1}/{ab2}
 
     [HttpPost]
