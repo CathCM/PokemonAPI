@@ -27,4 +27,14 @@ public class PokemonService : IPokemonService
         List<Pokemon> pokemonList = pokemonDao.Select(pokemon => MappingToPokemon(pokemon)).ToList();
         return pokemonList;
     }
+
+    public async Task<Pokemon> GetById(int id, CancellationToken token)
+    {
+        var pokemon = await dbContext.Pokemon
+            .Include(p => p.Types)
+            .Include(p => p.PokemonAbility)
+            .FirstOrDefaultAsync(x => x.Id == id, token);
+        Pokemon mappedPokemon = MappingToPokemon(pokemon);
+        return mappedPokemon;
+    }
 }

@@ -24,19 +24,14 @@ public class TestController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Pokemon>> GetPokemonById(int id, CancellationToken token)
     {
-        var pokemon = await dbContext.Pokemon
-            .Include(p => p.Types)
-            .Include(p => p.PokemonAbility)
-            .FirstOrDefaultAsync(x => x.Id == id, token);
+        var pokemon = await pokemonService.GetById(id, token);
 
         if (pokemon == null)
         {
             return NotFound();
         }
 
-        Pokemon mappedPokemon = pokemonService.MappingToPokemon(pokemon);
-
-        return mappedPokemon;
+        return pokemon;
     }
     
     [HttpPost]

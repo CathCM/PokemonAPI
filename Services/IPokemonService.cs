@@ -11,7 +11,7 @@ public interface IPokemonService
     //
     // //··········Read············
     Task<List<Pokemon>> GetAll(CancellationToken token);
-    // Task<Pokemon> GetById(int id, CancellationToken token);
+    Task<Pokemon> GetById(int id, CancellationToken token);
     // Task<List<string>> GetNames(string name, CancellationToken token);
     // Task<Pokemon> GetByName(string name, CancellationToken token);
     // Task<List<PokemonAbility>> GetAbilities(int id, CancellationToken token);
