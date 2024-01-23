@@ -26,9 +26,17 @@ public class AbilityController : ControllerBase
     
     // GET /ability/{ab1}/{ab2}
 
-    // [HttpPost]
-    // public ActionResult Create([FromBody] Ability ability) => Ok();
-    //
-    // [HttpDelete("{ability}")]
-    // public ActionResult Delete(string ability) => Ok();
+    [HttpPost]
+    public async Task<ActionResult> CreateAbility([FromBody] Ability ability, CancellationToken token)
+    {
+        await abilityService.Create(ability, token); 
+        return Ok(ability);
+    }
+    
+    [HttpDelete("{ability}")]
+    public async Task<ActionResult> Delete(string ability, CancellationToken token)
+    {
+        await abilityService.Delete(ability, token);
+        return Ok();
+    }
 }
