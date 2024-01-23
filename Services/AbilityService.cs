@@ -17,8 +17,8 @@ public class AbilityService : IAbilityService
         this.pokemonService = pokemonService;
     }
 
-    private Ability MappingToAbility(AbilityDao ability) => mapper.Map<Ability>(ability);
-    private AbilityDao MappingToAbility(Ability ability) => mapper.Map<AbilityDao>(ability);
+    private Ability MapToAbility(AbilityDao ability) => mapper.Map<Ability>(ability);
+    private AbilityDao MapToAbility(Ability ability) => mapper.Map<AbilityDao>(ability);
 
     public async Task<List<string>> GetAll(CancellationToken token)
     {

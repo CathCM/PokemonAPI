@@ -17,8 +17,8 @@ public class PokemonService : IPokemonService
         this.dbContext = dbContext;
 
     }
-    private Pokemon MappingToPokemon(PokemonDao pokemon) => mapper.Map<Pokemon>(pokemon);
-    private PokemonDao MappingToPokemonDao(Pokemon pokemon) => mapper.Map<PokemonDao>(pokemon);
+    private Pokemon MapToPokemon(PokemonDao pokemon) => mapper.Map<Pokemon>(pokemon);
+    private PokemonDao MapToPokemonDao(Pokemon pokemon) => mapper.Map<PokemonDao>(pokemon);
 
     //··········GET············
     public async Task<List<Pokemon>> GetAll(CancellationToken token)
@@ -28,7 +28,7 @@ public class PokemonService : IPokemonService
             .Include(p => p.Types)
             .ToListAsync(token);
 
-        List<Pokemon> pokemonList = pokemonDao.Select(pokemon => MappingToPokemon(pokemon)).ToList();
+        List<Pokemon> pokemonList = pokemonDao.Select(pokemon => MapToPokemon(pokemon)).ToList();
         return pokemonList;
     }
 
@@ -38,7 +38,7 @@ public class PokemonService : IPokemonService
             .Include(p => p.Types)
             .Include(p => p.PokemonAbility)
             .FirstOrDefaultAsync(x => x.Id == id, token);
-        Pokemon mappedPokemon = MappingToPokemon(pokemon);
+        Pokemon mappedPokemon = MapToPokemon(pokemon);
         return mappedPokemon;
     }
 
@@ -55,7 +55,7 @@ public class PokemonService : IPokemonService
             .Include(p => p.Types)
             .Include(p => p.PokemonAbility)
             .FirstOrDefaultAsync(x => x.Name.ToLower() == name.ToLower(), token);
-        Pokemon mappedPokemon = MappingToPokemon(pokemon);
+        Pokemon mappedPokemon = MapToPokemon(pokemon);
         return mappedPokemon;
     }
 

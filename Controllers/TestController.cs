@@ -9,12 +9,10 @@ namespace PokemonAPI.Controllers;
 [Route("/testcontroller")]
 public class TestController : ControllerBase
 {
-    private readonly PokemonDb dbContext;
     private readonly PokemonService pokemonService;
 
-    public TestController(PokemonDb dbContext, PokemonService pokemonService)
+    public TestController(PokemonService pokemonService)
     {
-        this.dbContext = dbContext;
         this.pokemonService = pokemonService;
     }
     // [HttpGet]

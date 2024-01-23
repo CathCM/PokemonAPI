@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using PokemonAPI.Models;
 using PokemonAPI.Services;
 
@@ -11,20 +10,18 @@ namespace PokemonAPI.Controllers;
 public class PokemonController : ControllerBase
 {
     private readonly PokemonService pokemonService;
-    private readonly PokemonDb dbContext;
-    private IActionResult CheckResponseNoContent<T>(List<T> response)
-    {
-        return (response == null || response.Count == 0) ? (IActionResult) NoContent() : Ok(response);
-    }
-    private IActionResult CheckResponseNotFound<T>(List<T> response)
-    {
-        return (response == null || response.Count == 0) ? (IActionResult) NotFound() : Ok(response);
-    }
+    // private IActionResult CheckResponseNoContent<T>(List<T> response)
+    // {
+    //     return (response == null || response.Count == 0) ? (IActionResult) NoContent() : Ok(response);
+    // }
+    // private IActionResult CheckResponseNotFound<T>(List<T> response)
+    // {
+    //     return (response == null || response.Count == 0) ? (IActionResult) NotFound() : Ok(response);
+    // }
     
-    public PokemonController(PokemonDb dbContext, PokemonService pokemonService)
+    public PokemonController(PokemonService pokemonService)
     {
         this.pokemonService = pokemonService;
-        this.dbContext = dbContext;
     }
 
     //··········GET············

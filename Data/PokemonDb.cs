@@ -9,7 +9,7 @@ public class PokemonDb : DbContext
 
     public DbSet<PokemonDao> Pokemon { get; set; } = null!;
     public DbSet<AbilityDao> Ability { get; set; } = null!;
-    public DbSet<TypeDao> Type { get; set; } = null!;
+    public DbSet<TypeDao> Types { get; set; } = null!;
     public DbSet<PokemonAbilityDao> PokemonAbility { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

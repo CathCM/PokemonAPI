@@ -8,12 +8,10 @@ namespace PokemonAPI.Controllers;
 
 public class AbilityController : ControllerBase
 {
-    private readonly PokemonDb dbContext;
     private readonly AbilityService abilityService;
 
-    public AbilityController(PokemonDb dbContext, AbilityService abilityService)
+    public AbilityController(AbilityService abilityService)
     {
-        this.dbContext = dbContext;
         this.abilityService = abilityService;
     }
     [HttpGet]
@@ -28,9 +26,9 @@ public class AbilityController : ControllerBase
     
     // GET /ability/{ab1}/{ab2}
 
-    [HttpPost]
-    public ActionResult Create([FromBody] Ability ability) => Ok();
-
-    [HttpDelete("{ability}")]
-    public ActionResult Delete(string ability) => Ok();
+    // [HttpPost]
+    // public ActionResult Create([FromBody] Ability ability) => Ok();
+    //
+    // [HttpDelete("{ability}")]
+    // public ActionResult Delete(string ability) => Ok();
 }

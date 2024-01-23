@@ -33,6 +33,7 @@ var connectionString = builder.Configuration.GetConnectionString(pokemonApiPath)
 builder.Services.AddSqlite<PokemonDb>(connectionString);
 builder.Services.AddScoped<PokemonService>();
 builder.Services.AddScoped<AbilityService>();
+builder.Services.AddScoped<TypeService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
