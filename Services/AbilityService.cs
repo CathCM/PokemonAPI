@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using PokemonAPI.Models;
 
@@ -8,13 +9,11 @@ public class AbilityService : IAbilityService
 {
     private readonly IMapper mapper;
     private readonly PokemonDb dbContext;
-    private readonly PokemonService pokemonService;
 
-    public AbilityService(IMapper mapper, PokemonDb dbContext, PokemonService pokemonService)
+    public AbilityService(IMapper mapper, PokemonDb dbContext)
     {
         this.mapper = mapper;
         this.dbContext = dbContext;
-        this.pokemonService = pokemonService;
     }
 
     private Ability MapToAbility(AbilityDao ability) => mapper.Map<Ability>(ability);
@@ -38,6 +37,39 @@ public class AbilityService : IAbilityService
     
         return pokemonsByAbilities;
     }
-    
-    
+    public async Task Create(Ability ability, CancellationToken token)
+    {
+        var abilityDao = MapToAbility(ability);
+        dbContext.Ability.Add(abilityDao);
+        await dbContext.SaveChangesAsync(token);
+    }
+
+    // public async Task Update(string name, Ability ability, CancellationToken token)
+    // {
+    //     var existingAbility = await dbContext.Ability.FirstOrDefaultAsync(a => a.Name == name, token);
+    //
+    //     if (existingAbility != null)
+    //     {
+    //         existingAbility.Name = ability.Name;
+    //         await dbContext.SaveChangesAsync(token);
+    //     }
+    //     else
+    //     {
+    //         throw new InvalidOperationException($"No se encontró ninguna habilidad con el nombre {name}");
+    //     }
+    // }
+
+    public async Task Delete(string name, CancellationToken token)
+    {
+        AbilityDao ability = await dbContext.Ability.FirstOrDefaultAsync(a => a.Name.ToLower() == name.ToLower(), token);
+        if (ability != null)
+        {
+            dbContext.Ability.Remove(ability);
+            await dbContext.SaveChangesAsync(token);
+        }
+        else
+        {
+            throw new InvalidOperationException($"{name} ability doesn't exists in database.");
+        }
+    }
 }
