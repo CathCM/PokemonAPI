@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PokemonAPI.Models;
+using PokemonAPI.Utils;
 
 namespace PokemonAPI.Services;
 
@@ -10,15 +11,13 @@ public class PokemonService : IPokemonService
 {
     private readonly IMapper mapper;
     private readonly PokemonDb dbContext;
-    private readonly AbilityService abilityService;
-    private readonly TypeService typeService;
+    private readonly PokemonUtils helper;
 
-    public PokemonService(IMapper mapper, PokemonDb dbContext, AbilityService abilityService, TypeService typeService)
+    public PokemonService(IMapper mapper, PokemonDb dbContext, PokemonUtils helper)
     {
         this.mapper = mapper;
         this.dbContext = dbContext;
-        this.typeService = typeService;
-        this.abilityService = abilityService;
+        this.helper = helper;
     }
 
     private Pokemon MapToPokemon(PokemonDao pokemon) => mapper.Map<Pokemon>(pokemon);
@@ -86,85 +85,26 @@ public class PokemonService : IPokemonService
 
     //··········POST············
 
-   public async Task Create(PokemonDao pokemon, CancellationToken token)
-{
-    try
+    public async Task Create(PokemonDao pokemon, CancellationToken token)
     {
-        await CheckExistingPokemon(pokemon, token);
-
-        var newTypes = await CheckPokemonTypes(pokemon, token);
-
-        await CheckPokemonAbilities(pokemon, token);
-
-        pokemon.Types = newTypes;
-
-        dbContext.Pokemon.Add(pokemon);
-        await dbContext.SaveChangesAsync(token);
-    }
-    catch (Exception ex)
-    {
-        throw new Exception($"Error creating pokemon: {ex.Message}");
-    }
-}
-
-private async Task CheckExistingPokemon(PokemonDao pokemon, CancellationToken token)
-{
-    var existingPokemon = await dbContext.Pokemon.FirstOrDefaultAsync(x => x.Name.ToLower() == pokemon.Name.ToLower(), token);
-    if (existingPokemon != null)
-    {
-        throw new Exception("This pokemon already exists.");
-    }
-}
-
-private async Task<List<TypeDao>> CheckPokemonTypes(PokemonDao pokemon, CancellationToken token)
-{
-    var newTypes = new List<TypeDao>();
-
-    foreach (var type in pokemon.Types)
-    {
-        var existingType = await dbContext.Types.FirstOrDefaultAsync(x => x.Name.ToLower() == type.Name.ToLower(), token);
-        if (existingType == null)
+        try
         {
-            var newType = new TypeDao { Name = type.Name };
-            dbContext.Types.Add(newType);
-            newTypes.Add(newType);
+            await helper.CheckExistingPokemon(pokemon, token);
+
+            var newTypes = await helper.CheckPokemonTypes(pokemon, token);
+
+            await helper.CheckPokemonAbilities(pokemon, token);
+
+            pokemon.Types = newTypes;
+
+            dbContext.Pokemon.Add(pokemon);
+            await dbContext.SaveChangesAsync(token);
         }
-        else
+        catch (Exception ex)
         {
-            newTypes.Add(existingType);
+            throw new Exception($"Error creating pokemon: {ex.Message}");
         }
     }
 
-    return newTypes;
-}
-
-private async Task CheckPokemonAbilities(PokemonDao pokemon, CancellationToken token)
-{
-    var pokemonAbilities = pokemon.PokemonAbility.Select(pa => pa.AbilityName.ToLower()).ToList();
-
-    foreach (var pokemonAbility in pokemon.PokemonAbility)
-    {
-        var existingAbility = await dbContext.Ability.FirstOrDefaultAsync(a => a.Name.ToLower() == pokemonAbility.AbilityName.ToLower(), token);
-
-        if (existingAbility == null)
-        {
-            var newAbility = new AbilityDao()
-            {
-                Name = pokemonAbility.AbilityName,
-            };
-            dbContext.Ability.Add(newAbility);
-        }
-
-        if (!pokemonAbilities.Contains(pokemonAbility.AbilityName.ToLower()))
-        {
-            var pokemonAbilityDao = new PokemonAbilityDao()
-            {
-                AbilityName = pokemonAbility.AbilityName,
-                IsHidden = pokemonAbility.IsHidden,
-            };
-            pokemon.PokemonAbility.Add(pokemonAbilityDao);
-        }
-    }
-}
-
+   
 }
