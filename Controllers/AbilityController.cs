@@ -27,7 +27,7 @@ public class AbilityController : ControllerBase
     // GET /ability/{ab1}/{ab2}
 
     [HttpPost]
-    public async Task<ActionResult> CreateAbility([FromBody] Ability ability, CancellationToken token)
+    public async Task<ActionResult> CreateAbility([FromBody] AbilityDao ability, CancellationToken token)
     {
         await abilityService.Create(ability, token); 
         return Ok(ability);

@@ -8,10 +8,8 @@ public class TypeService:ITypeService
 {
     private readonly PokemonDb dbContext;
     private readonly IMapper mapper;
-
     // private Types MapToType(TypeDao type) => mapper.Map<Types>(type);
-    private Pokemon MapToPokemon(PokemonDao pokemon) => mapper.Map<Pokemon>(pokemon);
-
+    private TypeDao MapToTypeDao(Types type) => mapper.Map<TypeDao>(type);
     public TypeService(PokemonDb dbContext, IMapper mapper)
     {
         this.dbContext = dbContext;
@@ -35,5 +33,29 @@ public class TypeService:ITypeService
         List<Pokemon> pokemons = pokemonsDao.Select(p => mapper.Map<Pokemon>(p)).ToList();
         return pokemons;
     }
+    public async Task Create(TypeDao type, CancellationToken token)
+    {
+        var existingType = dbContext.Types.FirstOrDefault(x => x.Name.ToLower() == type.Name.ToLower());
 
+        if (existingType == null)
+        {
+            dbContext.Types.Add(type);
+            await dbContext.SaveChangesAsync(token);
+        }
+    }
+
+
+    public async Task Delete(string name, CancellationToken token)
+    {
+        TypeDao type = await dbContext.Types.FirstOrDefaultAsync(t => t.Name.ToLower() == name.ToLower());
+        if (type is not null)
+        {
+            dbContext.Types.Remove(type);
+            await dbContext.SaveChangesAsync(token);
+        }
+        else
+        {
+            throw new InvalidOperationException($"{type} type doesn't exists in database");
+        }
+    }
 }

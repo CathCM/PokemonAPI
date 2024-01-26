@@ -76,23 +76,14 @@ public class PokemonController : ControllerBase
     }
 
 //     //··········POST············
-//
-    // [HttpPost]
-    // public async Task<ActionResult<Pokemon>> CreatePokemon([FromBody] PokemonDao pokemon, CancellationToken token)
-    // {
-    //     dbContext.Pokemon.Add(pokemon);
-    //     await dbContext.SaveChangesAsync(token);
-    //
-    //     await dbContext.Entry(pokemon)
-    //         .Reference(p => p.Types)
-    //         .LoadAsync(token);
-    //
-    //     await dbContext.Entry(pokemon)
-    //         .Collection(p => p.PokemonAbility)
-    //         .LoadAsync(token);
-    //
-    //     return CreatedAtAction("GetPokemonById", new { id = pokemon.Id }, pokemon);
-    // }
+    [HttpPost]
+    public async Task<ActionResult> CreatePokemon([FromBody] PokemonDao pokemon, CancellationToken token)
+    {
+        await pokemonService.Create(pokemon, token);
+        return (pokemon is null) ? NoContent() : Ok();
+
+    }
+    
 //
      
 //
@@ -136,3 +127,25 @@ public class PokemonController : ControllerBase
 //
 //
 }
+
+// {
+// "id": 0,
+// "name": "string",
+// "pokemonAbility": [
+// {
+//     "abilityName": "string",
+//     "isHidden": true
+// }
+// ],
+// "hp": 0,
+// "defense": 0,
+// "attack": 0,
+// "specialAttack": 0,
+// "specialDefense": 0,
+// "speed": 0,
+// "types": [
+// {
+//     "name": "string",
+//    }
+// ]
+// }

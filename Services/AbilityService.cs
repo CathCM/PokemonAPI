@@ -37,10 +37,9 @@ public class AbilityService : IAbilityService
     
         return pokemonsByAbilities;
     }
-    public async Task Create(Ability ability, CancellationToken token)
+    public async Task Create(AbilityDao ability, CancellationToken token)
     {
-        var abilityDao = MapToAbility(ability);
-        dbContext.Ability.Add(abilityDao);
+        dbContext.Ability.Add(ability);
         await dbContext.SaveChangesAsync(token);
     }
 
