@@ -9,24 +9,25 @@ namespace PokemonAPI.Services;
 
 public class PokemonService : IPokemonService
 {
-    private readonly IMapper mapper;
-    private readonly PokemonDb dbContext;
-    private readonly PokemonUtils helper;
+    private readonly IMapper _mapper;
+    private readonly PokemonDb _dbContext;
+    private readonly PokemonUtils _helper;
+    private readonly TransactionService _transactionService;
 
-    public PokemonService(IMapper mapper, PokemonDb dbContext, PokemonUtils helper)
+    public PokemonService(IMapper _mapper, PokemonDb _dbContext, PokemonUtils _helper, TransactionService _transactionService)
     {
-        this.mapper = mapper;
-        this.dbContext = dbContext;
-        this.helper = helper;
+        this._mapper = _mapper;
+        this._dbContext = _dbContext;
+        this._helper = _helper;
+        this._transactionService = _transactionService;
     }
 
-    private Pokemon MapToPokemon(PokemonDao pokemon) => mapper.Map<Pokemon>(pokemon);
-    private PokemonDao MapToPokemonDao(Pokemon pokemon) => mapper.Map<PokemonDao>(pokemon);
+    private Pokemon MapToPokemon(PokemonDao pokemon) => _mapper.Map<Pokemon>(pokemon);
 
     //··········GET············
     public async Task<List<Pokemon>> GetAll(CancellationToken token)
     {
-        List<PokemonDao> pokemonDao = await dbContext.Pokemon
+        List<PokemonDao> pokemonDao = await _dbContext.Pokemon
             .Include(p => p.PokemonAbility)
             .Include(p => p.Types)
             .ToListAsync(token);
@@ -37,7 +38,7 @@ public class PokemonService : IPokemonService
 
     public async Task<Pokemon> GetById(int id, CancellationToken token)
     {
-        PokemonDao? pokemon = await dbContext.Pokemon
+        PokemonDao? pokemon = await _dbContext.Pokemon
             .Include(p => p.Types)
             .Include(p => p.PokemonAbility)
             .FirstOrDefaultAsync(x => x.Id == id, token);
@@ -54,7 +55,7 @@ public class PokemonService : IPokemonService
 
     public async Task<Pokemon> GetByName(string name, CancellationToken token)
     {
-        PokemonDao? pokemon = await dbContext.Pokemon
+        PokemonDao? pokemon = await _dbContext.Pokemon
             .Include(p => p.Types)
             .Include(p => p.PokemonAbility)
             .FirstOrDefaultAsync(x => x.Name.ToLower() == name.ToLower(), token);
@@ -87,21 +88,24 @@ public class PokemonService : IPokemonService
 
     public async Task Create(PokemonDao pokemon, CancellationToken token)
     {
+        await _transactionService.BeginTransaction();
         try
         {
-            await helper.CheckExistingPokemon(pokemon, token);
+            await _helper.CheckExistingPokemon(pokemon, token);
 
-            var newTypes = await helper.CheckPokemonTypes(pokemon, token);
+            var newTypes = await _helper.CheckPokemonTypes(pokemon, token);
 
-            await helper.CheckPokemonAbilities(pokemon, token);
+            await _helper.CheckPokemonAbilities(pokemon, token);
 
             pokemon.Types = newTypes;
 
-            dbContext.Pokemon.Add(pokemon);
-            await dbContext.SaveChangesAsync(token);
+            _dbContext.Pokemon.Add(pokemon);
+            await _dbContext.SaveChangesAsync(token);
+            await _transactionService.CommitTransaction();
         }
         catch (Exception ex)
         {
+            await _transactionService.RollbackTransaction();
             throw new Exception($"Error creating pokemon: {ex.Message}");
         }
     }

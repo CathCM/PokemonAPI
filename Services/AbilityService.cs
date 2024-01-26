@@ -7,40 +7,37 @@ namespace PokemonAPI.Services;
 
 public class AbilityService : IAbilityService
 {
-    private readonly IMapper mapper;
-    private readonly PokemonDb dbContext;
+    private readonly IMapper _mapper;
+    private readonly PokemonDb _dbContext;
 
-    public AbilityService(IMapper mapper, PokemonDb dbContext)
+    public AbilityService(IMapper _mapper, PokemonDb _dbContext)
     {
-        this.mapper = mapper;
-        this.dbContext = dbContext;
+        this._mapper = _mapper;
+        this._dbContext = _dbContext;
     }
-
-    private Ability MapToAbility(AbilityDao ability) => mapper.Map<Ability>(ability);
-    private AbilityDao MapToAbility(Ability ability) => mapper.Map<AbilityDao>(ability);
 
     public async Task<List<string>> GetAll(CancellationToken token)
     {
-        var abilities = await dbContext.Ability.Select(x => x.Name).ToListAsync(token);
+        var abilities = await _dbContext.Ability.Select(x => x.Name).ToListAsync(token);
         return abilities;
     }
 
     public async Task<List<Pokemon>> GetAllByAbility(List<string> abilities, CancellationToken token)
     {
-        var pokemons = await dbContext.Pokemon
+        var pokemons = await _dbContext.Pokemon
             .Include(p => p.PokemonAbility)
             .Include(p => p.Types)
             .Where(p => p.PokemonAbility.Any(a => abilities.Contains(a.AbilityName)))
             .ToListAsync(token);
 
-        var pokemonsByAbilities = pokemons.Select(pokemon => mapper.Map<Pokemon>(pokemon)).ToList();
+        var pokemonsByAbilities = pokemons.Select(pokemon => _mapper.Map<Pokemon>(pokemon)).ToList();
     
         return pokemonsByAbilities;
     }
     public async Task Create(AbilityDao ability, CancellationToken token)
     {
-        dbContext.Ability.Add(ability);
-        await dbContext.SaveChangesAsync(token);
+        _dbContext.Ability.Add(ability);
+        await _dbContext.SaveChangesAsync(token);
     }
 
     // public async Task Update(string name, Ability ability, CancellationToken token)
@@ -60,11 +57,11 @@ public class AbilityService : IAbilityService
 
     public async Task Delete(string name, CancellationToken token)
     {
-        AbilityDao ability = await dbContext.Ability.FirstOrDefaultAsync(a => a.Name.ToLower() == name.ToLower(), token);
+        AbilityDao ability = await _dbContext.Ability.FirstOrDefaultAsync(a => a.Name.ToLower() == name.ToLower(), token);
         if (ability != null)
         {
-            dbContext.Ability.Remove(ability);
-            await dbContext.SaveChangesAsync(token);
+            _dbContext.Ability.Remove(ability);
+            await _dbContext.SaveChangesAsync(token);
         }
         else
         {
