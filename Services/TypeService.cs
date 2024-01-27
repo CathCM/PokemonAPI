@@ -10,7 +10,7 @@ public class TypeService:ITypeService
     private readonly IMapper _mapper;
     // private Types MapToType(TypeDao type) => mapper.Map<Types>(type);
     private TypeDao MapToTypeDao(Types type) => _mapper.Map<TypeDao>(type);
-    public TypeService(PokemonDb dbContext, IMapper _mapper)
+    public TypeService(PokemonDb _dbContext, IMapper _mapper)
     {
         this._dbContext = _dbContext;
         this._mapper = _mapper;
@@ -43,8 +43,6 @@ public class TypeService:ITypeService
             await _dbContext.SaveChangesAsync(token);
         }
     }
-
-
     public async Task Delete(string name, CancellationToken token)
     {
         TypeDao type = await _dbContext.Types.FirstOrDefaultAsync(t => t.Name.ToLower() == name.ToLower());

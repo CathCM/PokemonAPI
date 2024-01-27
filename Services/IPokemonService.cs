@@ -6,7 +6,7 @@ public interface IPokemonService
 {
     //··········Create············
     Task Create(PokemonDao pokemon, CancellationToken token);
-    // Task AddAbility(int id, Pokemon pokemon, CancellationToken token);
+    Task AddAbility(int id, PokemonAbility ability, CancellationToken token);
     // Task AddType(int id, Pokemon pokemon, CancellationToken token);
     //
     // //··········Read············

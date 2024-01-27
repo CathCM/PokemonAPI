@@ -80,18 +80,16 @@ public class PokemonController : ControllerBase
     public async Task<ActionResult> CreatePokemon([FromBody] PokemonDao pokemon, CancellationToken token)
     {
         await pokemonService.Create(pokemon, token);
-        return (pokemon is null) ? NoContent() : Ok();
+        return Ok();
 
     }
-    
-//
-     
-//
-//     [HttpPost]
-//     public ActionResult Create([FromBody] Pokemon pokemonCreate) => Ok();
-//
-//     [HttpPost("{id}/ability")]
-//     public ActionResult AddAbility(int id, [FromBody] Pokemon pokemonCreateAbility) => Ok();
+
+    [HttpPost("{id}/ability")]
+    public async Task<ActionResult> AddAbility(int id, PokemonAbility ability, CancellationToken token)
+    {
+        await pokemonService.AddAbility(id, ability, token);
+        return Ok();
+    }
 //
 //     [HttpPost("{id}/type")]
 //     public ActionResult AddType(int id, [FromBody] Types pokemonCreateType) => Ok();

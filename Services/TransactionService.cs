@@ -4,9 +4,9 @@ public class TransactionService : ITransactionService
 {
     private readonly PokemonDb _dbContext;
 
-    public TransactionService(PokemonDb dbContext)
+    public TransactionService(PokemonDb _dbContext)
     {
-        this._dbContext = dbContext;
+        this._dbContext = _dbContext;
     }
 
     public async Task BeginTransaction()

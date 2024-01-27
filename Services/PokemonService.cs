@@ -14,7 +14,8 @@ public class PokemonService : IPokemonService
     private readonly PokemonUtils _helper;
     private readonly TransactionService _transactionService;
 
-    public PokemonService(IMapper _mapper, PokemonDb _dbContext, PokemonUtils _helper, TransactionService _transactionService)
+    public PokemonService(IMapper _mapper, PokemonDb _dbContext, PokemonUtils _helper,
+        TransactionService _transactionService)
     {
         this._mapper = _mapper;
         this._dbContext = _dbContext;
@@ -23,6 +24,7 @@ public class PokemonService : IPokemonService
     }
 
     private Pokemon MapToPokemon(PokemonDao pokemon) => _mapper.Map<Pokemon>(pokemon);
+    private PokemonDao MapToPokemonDao(Pokemon pokemon) => _mapper.Map<PokemonDao>(pokemon);
 
     //··········GET············
     public async Task<List<Pokemon>> GetAll(CancellationToken token)
@@ -42,9 +44,16 @@ public class PokemonService : IPokemonService
             .Include(p => p.Types)
             .Include(p => p.PokemonAbility)
             .FirstOrDefaultAsync(x => x.Id == id, token);
+
+        if (pokemon == null)
+        {
+            throw new Exception($"Pokemon {id} doesn't exists.");
+        }
+
         Pokemon mappedPokemon = MapToPokemon(pokemon);
         return mappedPokemon;
     }
+
 
     public async Task<List<string>> GetNames(CancellationToken token)
     {
@@ -88,27 +97,58 @@ public class PokemonService : IPokemonService
 
     public async Task Create(PokemonDao pokemon, CancellationToken token)
     {
-        await _transactionService.BeginTransaction();
+        // await _transactionService.BeginTransaction();
         try
         {
             await _helper.CheckExistingPokemon(pokemon, token);
 
             var newTypes = await _helper.CheckPokemonTypes(pokemon, token);
 
-            await _helper.CheckPokemonAbilities(pokemon, token);
+            await _helper.CheckPokemonAbility(pokemon, token);
 
             pokemon.Types = newTypes;
 
             _dbContext.Pokemon.Add(pokemon);
             await _dbContext.SaveChangesAsync(token);
-            await _transactionService.CommitTransaction();
+            // await _transactionService.CommitTransaction();
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            await _transactionService.RollbackTransaction();
-            throw new Exception($"Error creating pokemon: {ex.Message}");
+            // await _transactionService.RollbackTransaction();
+            throw new Exception($"Error creating pokemon: {e.Message}");
         }
     }
 
-   
+    public async Task AddAbility(int id, PokemonAbility ability, CancellationToken token)
+    {
+        await _transactionService.BeginTransaction();
+        try
+        {
+            var pokemonById = await GetById(id, token);
+            var pokemon = MapToPokemonDao(pokemonById);
+            await _helper.CheckAbility(ability.Name, token);
+    
+            var pokemonAbilities = pokemon.PokemonAbility.Select(pa => pa.AbilityName.ToLower()).ToList();
+            if (!pokemonAbilities.Contains(ability.Name.ToLower()))
+            {
+                var pokemonAbilityDao = new PokemonAbilityDao()
+                {
+                    PokemonId = pokemon.Id,
+                    AbilityName = ability.Name,
+                    IsHidden = ability.IsHidden,
+                };
+                _dbContext.PokemonAbility.Add(pokemonAbilityDao);
+            }
+    
+            await _dbContext.SaveChangesAsync(token);
+            await _transactionService.CommitTransaction();
+        }
+        catch (Exception e)
+        {
+            await _transactionService.RollbackTransaction();
+            throw new Exception($"Error adding ability to pokemon: {e.Message}");
+        }
+    }
+
+
 }
