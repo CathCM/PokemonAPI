@@ -13,7 +13,7 @@ public class PokemonUtils
      public async Task CheckExistingPokemon(PokemonDao pokemon, CancellationToken token)
     {
         var existingPokemon = await _dbContext.Pokemon.FirstOrDefaultAsync(x => 
-                x.Name.ToLower() == pokemon.Name.ToLower() && 
+                x.Name.ToLower() == pokemon.Name.ToLower() || 
                 x.Id == pokemon.Id, token);
 
         if (existingPokemon != null)
@@ -58,7 +58,7 @@ public class PokemonUtils
             {
                 var pokemonAbilityDao = new PokemonAbilityDao()
                 {
-                    // PokemonId = pokemon.Id,
+                    PokemonId = pokemon.Id,
                     AbilityName = pokemonAbility.AbilityName,
                     IsHidden = pokemonAbility.IsHidden,
                 };

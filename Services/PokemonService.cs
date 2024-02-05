@@ -2,8 +2,10 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PokemonAPI.Migrations;
 using PokemonAPI.Models;
 using PokemonAPI.Utils;
+using PokemonAbilityDao = PokemonAPI.Models.PokemonAbilityDao;
 
 namespace PokemonAPI.Services;
 
@@ -114,28 +116,28 @@ public class PokemonService : IPokemonService
         }
         catch (Exception e)
         {
-            // await _transactionService.RollbackTransaction();
-            throw new Exception($"Error creating pokemon: {e.Message}");
+        //     await _transactionService.RollbackTransaction();
+        throw new Exception($"Error creating pokemon: {e.Message}");
         }
     }
 
-    public async Task AddAbility(int id, PokemonAbility ability, CancellationToken token)
+    public async Task AddAbility(int id, PokemonAbility newAbility, CancellationToken token)
     {
         await _transactionService.BeginTransaction();
         try
         {
-            var pokemonById = await GetById(id, token);
-            var pokemon = MapToPokemonDao(pokemonById);
-            await _helper.CheckAbility(ability.Name, token);
+            Pokemon pokemonById = await GetById(id, token);
+            PokemonDao pokemon = MapToPokemonDao(pokemonById);
+            await _helper.CheckAbility(newAbility.Name, token);
     
             var pokemonAbilities = pokemon.PokemonAbility.Select(pa => pa.AbilityName.ToLower()).ToList();
-            if (!pokemonAbilities.Contains(ability.Name.ToLower()))
+            if (!pokemonAbilities.Contains(newAbility.Name.ToLower()))
             {
                 var pokemonAbilityDao = new PokemonAbilityDao()
                 {
                     PokemonId = pokemon.Id,
-                    AbilityName = ability.Name,
-                    IsHidden = ability.IsHidden,
+                    AbilityName = newAbility.Name,
+                    IsHidden = newAbility.IsHidden,
                 };
                 _dbContext.PokemonAbility.Add(pokemonAbilityDao);
             }
@@ -147,6 +149,43 @@ public class PokemonService : IPokemonService
         {
             await _transactionService.RollbackTransaction();
             throw new Exception($"Error adding ability to pokemon: {e.Message}");
+        }
+    }
+
+    public async Task AddType(int id, TypeDao type, CancellationToken token)
+    {
+        await _transactionService.BeginTransaction();
+        try
+        {
+            Pokemon pokemonById = await GetById(id, token);
+            PokemonDao pokemon = MapToPokemonDao(pokemonById);
+
+            var existingTypeInDb = pokemon.Types.Any(t => t.Name.ToLower() == type.Name.ToLower());
+            if (existingTypeInDb == false)
+            {
+                var newType = new TypeDao()
+                {
+                    Name = type.Name,
+                };
+                _dbContext.Types.Add(newType);
+            }
+            
+            var pokemonTypes = pokemon.Types.Select(t => t.Name.ToLower()).ToList();
+            if (!pokemonTypes.Contains(type.Name.ToLower()))
+            {
+                var pokemonTypeDao = new TypeDao() // aqui debe ir la tabla de asociacion 
+                {
+                    Name = type.Name
+                };
+                _dbContext.Types.Add(pokemonTypeDao);
+            }
+            await _dbContext.SaveChangesAsync(token);
+            await _transactionService.CommitTransaction();
+        }
+        catch (Exception e)
+        {
+            await _transactionService.RollbackTransaction();            
+            throw new Exception($"Error adding type to pokemon: {e.Message}");
         }
     }
 

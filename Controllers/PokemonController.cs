@@ -6,10 +6,9 @@ namespace PokemonAPI.Controllers;
 
 [ApiController]
 [Route("pokemon")]
-
 public class PokemonController : ControllerBase
 {
-    private readonly PokemonService pokemonService;
+    private readonly PokemonService _pokemonService;
     // private IActionResult CheckResponseNoContent<T>(List<T> response)
     // {
     //     return (response == null || response.Count == 0) ? (IActionResult) NoContent() : Ok(response);
@@ -18,28 +17,28 @@ public class PokemonController : ControllerBase
     // {
     //     return (response == null || response.Count == 0) ? (IActionResult) NotFound() : Ok(response);
     // }
-    
-    public PokemonController(PokemonService pokemonService)
+
+    public PokemonController(PokemonService _pokemonService)
     {
-        this.pokemonService = pokemonService;
+        this._pokemonService = _pokemonService;
     }
 
     //··········GET············
     [HttpGet]
     public async Task<ActionResult<List<Pokemon>>> GetAllPokemon(CancellationToken token) =>
-        await pokemonService.GetAll(token);
+        await _pokemonService.GetAll(token);
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Pokemon>> GetPokemonById(int id, CancellationToken token)
     {
-        var pokemon = await pokemonService.GetById(id, token);
+        var pokemon = await _pokemonService.GetById(id, token);
         return (pokemon == null) ? NotFound() : Ok(pokemon);
     }
 
     [HttpGet("name")]
     public async Task<ActionResult<List<string>>> GetPokemonNames(CancellationToken token)
     {
-        List<string> pokemonNames = await pokemonService.GetNames(token);
+        List<string> pokemonNames = await _pokemonService.GetNames(token);
         return (pokemonNames == null || pokemonNames.Count == 0) ? NoContent() : Ok(pokemonNames);
     }
 
@@ -47,16 +46,15 @@ public class PokemonController : ControllerBase
     [HttpGet("name/{name}")]
     public async Task<ActionResult<Pokemon>> GetPokemonByName(string name, CancellationToken token)
     {
-        var pokemon = await pokemonService.GetByName(name, token);
+        var pokemon = await _pokemonService.GetByName(name, token);
 
         return (pokemon == null) ? NoContent() : Ok(pokemon);
-      
     }
 
     [HttpGet("{id}/ability")]
     public async Task<ActionResult<List<PokemonAbility>>> GetPokemonAbilities(int id, CancellationToken token)
     {
-        List<PokemonAbility> abilities = await pokemonService.GetAbilities(id, token);
+        List<PokemonAbility> abilities = await _pokemonService.GetAbilities(id, token);
         return (abilities == null || abilities.Count == 0) ? NoContent() : Ok(abilities);
     }
 
@@ -64,14 +62,14 @@ public class PokemonController : ControllerBase
     [HttpGet("{id}/stats")]
     public async Task<ActionResult<List<PokemonStat>>> GetPokemonStats(int id, CancellationToken token)
     {
-        List<PokemonStat> stats = await pokemonService.GetStats(id, token);
+        List<PokemonStat> stats = await _pokemonService.GetStats(id, token);
         return (stats == null || stats.Count == 0) ? NoContent() : Ok(stats);
     }
 
     [HttpGet("{id}/type")]
     public async Task<ActionResult<List<string>>> GetPokemonType(int id, CancellationToken token)
     {
-        List<string> types = await pokemonService.GetType(id, token);
+        List<string> types = await _pokemonService.GetType(id, token);
         return (types == null || types.Count == 0) ? NoContent() : Ok(types);
     }
 
@@ -79,20 +77,26 @@ public class PokemonController : ControllerBase
     [HttpPost]
     public async Task<ActionResult> CreatePokemon([FromBody] PokemonDao pokemon, CancellationToken token)
     {
-        await pokemonService.Create(pokemon, token);
+        await _pokemonService.Create(pokemon, token);
         return Ok();
-
     }
 
     [HttpPost("{id}/ability")]
     public async Task<ActionResult> AddAbility(int id, PokemonAbility ability, CancellationToken token)
     {
-        await pokemonService.AddAbility(id, ability, token);
+        await _pokemonService.AddAbility(id, ability, token);
         return Ok();
     }
+
 //
-//     [HttpPost("{id}/type")]
-//     public ActionResult AddType(int id, [FromBody] Types pokemonCreateType) => Ok();
+    [HttpPost("{id}/type")]
+    public async Task<ActionResult> AddType(int id, TypeDao newTypePokemon, CancellationToken token)
+    {
+        await _pokemonService.AddType(id, newTypePokemon, token);
+        return Ok();
+    }
+}
+
 //
 //     //··········PUT············
 //
@@ -124,7 +128,7 @@ public class PokemonController : ControllerBase
 //     public ActionResult DeleteType(int id, string type) => Ok();
 //
 //
-}
+
 
 // {
 // "id": 0,
