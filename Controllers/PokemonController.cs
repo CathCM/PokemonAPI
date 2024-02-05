@@ -95,7 +95,7 @@ public class PokemonController : ControllerBase
         await _pokemonService.AddType(id, newTypePokemon, token);
         return Ok();
     }
-}
+
 
 //
 //     //··········PUT············
@@ -103,8 +103,12 @@ public class PokemonController : ControllerBase
 //     [HttpPut("{id}")]
 //     public ActionResult Update(int id, [FromBody] Pokemon pokemonUpdate) => Ok();
 //
-//     [HttpPut("{id}/name")]
-//     public ActionResult UpdateName(int id, [FromBody] Pokemon pokemonUpdateName) => Ok();
+     [HttpPut("{id}/name")]
+     public async Task<ActionResult> UpdateName(int id, [FromBody] PokemonDao pokemon, CancellationToken token)
+     {
+             await _pokemonService.UpdateName(id, pokemon, token);
+             return Ok();
+     }
 //
 //     [HttpPut("{id}/ability/{ability}/{isHidden}")]
 //     public ActionResult UpdateAbility(int id, [FromBody] Pokemon pokemonUpdateAbility) => Ok();
@@ -150,4 +154,4 @@ public class PokemonController : ControllerBase
 //     "name": "string",
 //    }
 // ]
-// }
+}

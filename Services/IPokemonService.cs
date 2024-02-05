@@ -20,7 +20,7 @@ public interface IPokemonService
     //
     // //··········Update············
     // Task Update(int id, Pokemon pokemon, CancellationToken token);
-    // Task UpdateName(int id, Pokemon pokemon, CancellationToken token);
+    Task UpdateName(int id, PokemonDao pokemon, CancellationToken token);
     // Task UpdateAbility(int id, Pokemon pokemon, CancellationToken token);
     // Task UpdateStats(int id, Pokemon pokemon, CancellationToken token);
     //

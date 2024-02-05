@@ -99,7 +99,7 @@ public class PokemonService : IPokemonService
 
     public async Task Create(PokemonDao pokemon, CancellationToken token)
     {
-        // await _transactionService.BeginTransaction();
+        await _transactionService.BeginTransaction();
         try
         {
             await _helper.CheckExistingPokemon(pokemon, token);
@@ -112,12 +112,12 @@ public class PokemonService : IPokemonService
 
             _dbContext.Pokemon.Add(pokemon);
             await _dbContext.SaveChangesAsync(token);
-            // await _transactionService.CommitTransaction();
+            await _transactionService.CommitTransaction();
         }
         catch (Exception e)
         {
-        //     await _transactionService.RollbackTransaction();
-        throw new Exception($"Error creating pokemon: {e.Message}");
+            await _transactionService.RollbackTransaction();
+            throw new Exception($"Error creating pokemon: {e.Message}");
         }
     }
 
@@ -129,7 +129,7 @@ public class PokemonService : IPokemonService
             Pokemon pokemonById = await GetById(id, token);
             PokemonDao pokemon = MapToPokemonDao(pokemonById);
             await _helper.CheckAbility(newAbility.Name, token);
-    
+
             var pokemonAbilities = pokemon.PokemonAbility.Select(pa => pa.AbilityName.ToLower()).ToList();
             if (!pokemonAbilities.Contains(newAbility.Name.ToLower()))
             {
@@ -141,7 +141,7 @@ public class PokemonService : IPokemonService
                 };
                 _dbContext.PokemonAbility.Add(pokemonAbilityDao);
             }
-    
+
             await _dbContext.SaveChangesAsync(token);
             await _transactionService.CommitTransaction();
         }
@@ -169,25 +169,47 @@ public class PokemonService : IPokemonService
                 };
                 _dbContext.Types.Add(newType);
             }
-            
+
             var pokemonTypes = pokemon.Types.Select(t => t.Name.ToLower()).ToList();
             if (!pokemonTypes.Contains(type.Name.ToLower()))
             {
-                var pokemonTypeDao = new TypeDao() // aqui debe ir la tabla de asociacion 
+                var pokemonTypeDao = new TypeDao()
                 {
                     Name = type.Name
                 };
                 _dbContext.Types.Add(pokemonTypeDao);
             }
+
             await _dbContext.SaveChangesAsync(token);
             await _transactionService.CommitTransaction();
         }
         catch (Exception e)
         {
-            await _transactionService.RollbackTransaction();            
+            await _transactionService.RollbackTransaction();
             throw new Exception($"Error adding type to pokemon: {e.Message}");
         }
     }
 
+    //··········PUT············
 
+    public async Task UpdateName(int id, PokemonDao pokemon, CancellationToken token)
+    {
+        await _transactionService.BeginTransaction();
+        try
+        {
+            var updatePokemon = await _dbContext.Pokemon
+                .Include(p => p.Types)
+                .Include(p => p.PokemonAbility)
+                .FirstOrDefaultAsync(x => x.Id == id, token);
+            updatePokemon.Name = pokemon.Name;
+            await _dbContext.SaveChangesAsync(token);
+            await _transactionService.CommitTransaction();
+        }
+        catch (Exception e)
+        {
+            await _transactionService.RollbackTransaction();
+            throw new Exception($"Error changing name: {e.Message}");
+        }
+    }
+    //··········DELETE············
 }
