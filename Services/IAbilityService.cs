@@ -6,7 +6,7 @@ public interface IAbilityService
 {
     
     //··········Create············
-    Task Create(Ability ability, CancellationToken token);
+    Task Create(AbilityDao ability, CancellationToken token);
     // //··········Read············
     Task<List<string>> GetAll(CancellationToken token);
     Task<List<Pokemon>> GetAllByAbility(List<string> abilities, CancellationToken token);

@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using AutoMapper;
 using PokemonAPI.Mapping;
 using PokemonAPI.Services;
+using PokemonAPI.Utils;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,6 +35,8 @@ builder.Services.AddSqlite<PokemonDb>(connectionString);
 builder.Services.AddScoped<PokemonService>();
 builder.Services.AddScoped<AbilityService>();
 builder.Services.AddScoped<TypeService>();
+builder.Services.AddScoped<TransactionService>();
+builder.Services.AddScoped<PokemonUtils>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

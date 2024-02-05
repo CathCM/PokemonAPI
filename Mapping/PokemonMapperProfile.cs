@@ -28,5 +28,23 @@ public class PokemonMapperProfile : Profile
             {
                 Name = e.Name
             }).ToList()));
+        
+        CreateMap<Pokemon, PokemonDao>()
+            .ForMember(dest => dest.PokemonAbility, opt => opt.MapFrom(src => src.Abilities.Select(e => new PokemonAbilityDao
+            {
+                AbilityName = e.Name,
+                IsHidden = e.IsHidden
+            }).ToList()))
+            .ForMember(dest => dest.Hp, opt => opt.MapFrom(src => src.Stats.FirstOrDefault(s => s.Name == "Hp").BaseStat))
+            .ForMember(dest => dest.Defense, opt => opt.MapFrom(src => src.Stats.FirstOrDefault(s => s.Name == "Defense").BaseStat))
+            .ForMember(dest => dest.Attack, opt => opt.MapFrom(src => src.Stats.FirstOrDefault(s => s.Name == "Attack").BaseStat))
+            .ForMember(dest => dest.SpecialAttack, opt => opt.MapFrom(src => src.Stats.FirstOrDefault(s => s.Name == "SpecialAttack").BaseStat))
+            .ForMember(dest => dest.SpecialDefense, opt => opt.MapFrom(src => src.Stats.FirstOrDefault(s => s.Name == "SpecialDefense").BaseStat))
+            .ForMember(dest => dest.Speed, opt => opt.MapFrom(src => src.Stats.FirstOrDefault(s => s.Name == "Speed").BaseStat))
+            .ForMember(dest => dest.Types, opt => opt.MapFrom(src => src.Types.Select(t => new TypeDao
+            {
+                Name = t.Name
+            }).ToList()));
+
     }
 }

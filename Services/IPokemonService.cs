@@ -5,9 +5,9 @@ namespace PokemonAPI.Services;
 public interface IPokemonService
 {
     //··········Create············
-    // Task Create(PokemonDao pokemon, CancellationToken token);
-    // Task AddAbility(int id, Pokemon pokemon, CancellationToken token);
-    // Task AddType(int id, Pokemon pokemon, CancellationToken token);
+    Task Create(PokemonDao pokemon, CancellationToken token);
+    Task AddAbility(int id, PokemonAbility newAbility, CancellationToken token);
+    Task AddType(int id, TypeDao pokemon, CancellationToken token);
     //
     // //··········Read············
     Task<List<Pokemon>> GetAll(CancellationToken token);

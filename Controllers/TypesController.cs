@@ -22,16 +22,16 @@ public class TypeController : ControllerBase
         return pokemons == null ? NoContent() : Ok(pokemons);
     }
     
-    // [HttpPost]
-    // public ActionResult Create([FromBody] Types createType) => Ok();
-    //
-    // [HttpDelete("{type}")]
-    // public ActionResult Delete(string type) => Ok();
-
+    [HttpPost]
+    public async Task<ActionResult> CreateType(TypeDao type, CancellationToken token)
+    {
+        await typeService.Create(type, token);
+        return Ok();
+    }
+    [HttpDelete("{type}")]
+    public async Task<ActionResult> DeleteType(string type, CancellationToken token)
+    {
+        await typeService.Delete(type, token);
+        return Ok();
+    }
 } 
-// public async Task<List<string>> GetTypes(CancellationToken token)
-// {
-//     var pokemon = await GetAll(token);
-//     List<string> types = pokemon.SelectMany(x => x.Types).Distinct().ToList();
-//     return types;
-// }
