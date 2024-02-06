@@ -427,7 +427,30 @@ public class PokemonService : IPokemonService
         catch (Exception e)
         {
             await _transactionService.RollbackTransaction();
-            throw new Exception($"Error {e.Message}");
+            throw new Exception($"Error deleting pokemon {e.Message}");
         }
+    }
+
+    public async Task DeleteAbilities(int id, CancellationToken token)
+    {
+        await _transactionService.BeginTransaction();
+        try
+        {
+            var pokemon = await GetByIdFromDb(id, token);
+            if (pokemon is null)
+            {
+                throw new Exception($"Pokemon id {id} doesn't exists.");
+            }
+            _dbContext.PokemonAbility.RemoveRange(pokemon.PokemonAbility);
+            await _dbContext.SaveChangesAsync(token);
+            await _transactionService.CommitTransaction();
+
+        }
+        catch (Exception e)
+        {
+            await _transactionService.RollbackTransaction();
+            throw new Exception($"Error deleting abilities {e.Message}");
+        }
+
     }
 }
