@@ -10,16 +10,7 @@ namespace PokemonAPI.Controllers;
 public class PokemonController : ControllerBase
 {
     private readonly PokemonService _pokemonService;
-    // private IActionResult CheckResponseNoContent<T>(List<T> response)
-    // {
-    //     return (response == null || response.Count == 0) ? (IActionResult) NoContent() : Ok(response);
-    // }
-    // private IActionResult CheckResponseNotFound<T>(List<T> response)
-    // {
-    //     return (response == null || response.Count == 0) ? (IActionResult) NotFound() : Ok(response);
-    // }
-
-    public PokemonController(PokemonService _pokemonService)
+  public PokemonController(PokemonService _pokemonService)
     {
         this._pokemonService = _pokemonService;
     }
@@ -74,7 +65,7 @@ public class PokemonController : ControllerBase
         return (types == null || types.Count == 0) ? NoContent() : Ok(types);
     }
 
-//     //··········POST············
+    //··········POST············
     [HttpPost]
     public async Task<ActionResult> CreatePokemon([FromBody] PokemonDao pokemon, CancellationToken token)
     {
@@ -88,19 +79,13 @@ public class PokemonController : ControllerBase
         await _pokemonService.AddAbility(id, ability, token);
         return Ok();
     }
-
-//
     [HttpPost("{id}/type")]
     public async Task<ActionResult> AddType(int id, TypeDao newTypePokemon, CancellationToken token)
     {
         await _pokemonService.AddType(id, newTypePokemon, token);
         return Ok();
     }
-
-
-//
-//     //··········PUT············
-//
+    //··········PUT············
     // [HttpPut("{id:int}")]
     // public async Task<ActionResult> Update(int id, string property, [FromBody] PokemonDao pokemonUpdate, CancellationToken token)
     // {
@@ -115,10 +100,6 @@ public class PokemonController : ControllerBase
         return Ok();
     }
 
-//
-//     [HttpPut("{id}/ability/{ability}/{isHidden}")]
-//     public ActionResult UpdateAbility(int id, [FromBody] Pokemon pokemonUpdateAbility) => Ok();
-//
     [HttpPut("{id:int}/stats/{statName}/{baseStat:int}")]
     public async Task<ActionResult> UpdateStat(int id, string statName, int baseStat, [FromBody] PokemonDao pokemon,
         CancellationToken token)
@@ -127,8 +108,6 @@ public class PokemonController : ControllerBase
         return Ok();
     }
 
-//
-//
 //     //··········DELETE············
 //
     [HttpDelete("{id}")]
@@ -137,7 +116,6 @@ public class PokemonController : ControllerBase
         await _pokemonService.Delete(id, token);
         return Ok();
     }
-//
     [HttpDelete("{id}/ability")]
     public async Task<ActionResult> DeleteAllAbilities(int id, CancellationToken token)
     {
@@ -158,28 +136,4 @@ public class PokemonController : ControllerBase
         await _pokemonService.DeleteType(id, type, token);
         return Ok();
     }
-
-
-
-
-// {
-// "id": 0,
-// "name": "string",
-// "pokemonAbility": [
-// {
-//     "abilityName": "string",
-//     "isHidden": true
-// }
-// ],
-// "hp": 0,
-// "defense": 0,
-// "attack": 0,
-// "specialAttack": 0,
-// "specialDefense": 0,
-// "speed": 0,
-// "types": [
-// {
-//     "name": "string",
-//    }
-// ]
 }

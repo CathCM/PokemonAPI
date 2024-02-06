@@ -166,39 +166,39 @@ public class PokemonService : IPokemonService
         await _transactionService.BeginTransaction();
         try
         {
-            Pokemon pokemonById = await GetById(id, token);
-            PokemonDao pokemon = MapToPokemonDao(pokemonById);
-
-            var existingTypeInDb = pokemon.Types.Any(t => t.Name.ToLower() == type.Name.ToLower());
-            if (existingTypeInDb == false)
+            var pokemon = await GetByIdFromDb(id, token);
+            if (pokemon is null)
             {
-                var newType = new TypeDao()
-                {
-                    Name = type.Name,
-                };
-                _dbContext.Types.Add(newType);
+                throw new Exception($"Pokemon id {id} doesn't exists.");
             }
 
-            var pokemonTypes = pokemon.Types.Select(t => t.Name.ToLower()).ToList();
-            if (!pokemonTypes.Contains(type.Name.ToLower()))
+            var pokemonType = pokemon.Types.FirstOrDefault(t => t.Name.ToLower() == type.Name.ToLower());
+            if (pokemonType is null)
             {
-                var pokemonTypeDao = new TypeDao()
-                {
-                    Name = type.Name
-                };
-                _dbContext.Types.Add(pokemonTypeDao);
+                pokemonType = new TypeDao { Name = type.Name };
+                pokemon.Types.Add(pokemonType);
             }
+            else
+            {
+                var existingType =
+                    await _dbContext.Types.FirstOrDefaultAsync(et => et.Name.ToLower() == type.Name.ToLower(), token);
+                if (existingType is null)
+                {
+                    existingType = new TypeDao { Name = type.Name };
+                    _dbContext.Types.Add(existingType);
+                }
 
+                pokemonType.Name = type.Name;
+            }
             await _dbContext.SaveChangesAsync(token);
             await _transactionService.CommitTransaction();
         }
         catch (Exception e)
         {
             await _transactionService.RollbackTransaction();
-            throw new Exception($"Error adding type to pokemon: {e.Message}");
+            throw new Exception($"Error adding type: {e.Message}");
         }
     }
-
 
     //··········PUT············
     // public async Task Update<T>(int id, string property, T value, PokemonDao pokemon, CancellationToken token)
