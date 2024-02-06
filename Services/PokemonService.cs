@@ -407,6 +407,42 @@ public class PokemonService : IPokemonService
             throw new Exception($"Error changing name: {e.Message}");
         }
     }
+
+    public async Task UpdateType(int id, string type, string newType, CancellationToken token)
+    {
+        await _transactionService.BeginTransaction();
+        try
+        {
+            var pokemon = await GetByIdFromDb(id, token);
+            if (pokemon is null)
+            {
+                throw new Exception($"Pokemon id {id} doesn't exists.");
+            }
+
+            var typeToUpdate = pokemon.Types.FirstOrDefault(t => t.Name.ToLower() == type.ToLower());
+            if (typeToUpdate is null)
+            {
+                throw new Exception($"Type {type} doesn't exists for pokemon {pokemon.Name}.");
+            }
+
+            var existingType =
+                await _dbContext.Types.FirstOrDefaultAsync(et => et.Name.ToLower() == newType.ToLower(), token);
+            if (existingType is null)
+            {
+                existingType = new TypeDao { Name = newType };
+                _dbContext.Types.Add(existingType);
+            }
+
+            typeToUpdate.Name = newType;
+            await _dbContext.SaveChangesAsync(token);
+            await _transactionService.CommitTransaction();
+        }
+        catch (Exception e)
+        {
+            await _transactionService.RollbackTransaction();
+            throw new Exception($"Error updating type: {e.Message}");
+        }
+    }
     //··········DELETE············
 
     public async Task Delete(int id, CancellationToken token)
@@ -481,6 +517,7 @@ public class PokemonService : IPokemonService
             throw new Exception($"Error deleting ability {ability}.");
         }
     }
+
     public async Task DeleteType(int id, string type, CancellationToken token)
     {
         await _transactionService.BeginTransaction();
@@ -494,7 +531,6 @@ public class PokemonService : IPokemonService
 
             if (pokemon.Types.Count == 1)
             {
-
                 throw new Exception("Pokemon must belong to at least one type.");
             }
 

@@ -23,6 +23,7 @@ public interface IPokemonService
     Task UpdateName(int id, PokemonDao pokemon, CancellationToken token);
     Task UpdateStats(int id, string statName, int baseStat, PokemonDao pokemon, CancellationToken token);
 
+    Task UpdateType(int id, string type, string newType, CancellationToken token);
     // //··········Delete············
     Task Delete(int id, CancellationToken token);
     Task DeleteAbilities(int id, CancellationToken token);
