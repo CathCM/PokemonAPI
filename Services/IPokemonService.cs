@@ -19,11 +19,10 @@ public interface IPokemonService
     Task<List<string>> GetType(int id, CancellationToken token);
     //
     // //··········Update············
-    // Task Update(int id, Pokemon pokemon, CancellationToken token);
+    // Task Update<T>(int id, string property, T value, PokemonDao pokemon, CancellationToken token);
     Task UpdateName(int id, PokemonDao pokemon, CancellationToken token);
-    // Task UpdateAbility(int id, Pokemon pokemon, CancellationToken token);
-    // Task UpdateStats(int id, Pokemon pokemon, CancellationToken token);
-    //
+    Task UpdateStats(int id, string statName, int baseStat, PokemonDao pokemon, CancellationToken token);
+
     // //··········Delete············
     // Task Delete(int id, CancellationToken token);
     // Task DeleteAbilities(int id, CancellationToken token);

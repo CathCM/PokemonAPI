@@ -88,6 +88,15 @@ public class PokemonService : IPokemonService
         return pokemonStats;
     }
 
+    public async Task<PokemonDao> GetByIdFromDb(int id, CancellationToken token)
+    {
+        PokemonDao? pokemon = await _dbContext.Pokemon
+            .Include(p => p.Types)
+            .Include(p => p.PokemonAbility)
+            .FirstOrDefaultAsync(x => x.Id == id, token);
+        return pokemon;
+    }
+
     public async Task<List<string>> GetType(int id, CancellationToken token)
     {
         var pokemon = await GetById(id, token);
@@ -190,17 +199,204 @@ public class PokemonService : IPokemonService
         }
     }
 
+
     //··········PUT············
+    // public async Task Update<T>(int id, string property, T value, PokemonDao pokemon, CancellationToken token)
+    // {
+    //     await _transactionService.BeginTransaction();
+    //     try
+    //     {
+    //         var existingPokemon = await GetByIdFromDb(id, token);
+    //         if (existingPokemon is null)
+    //         {
+    //             throw new Exception($"Pokemon id {id} doesn't exists");
+    //         }
+    //
+    //         switch (property)
+    //         {
+    //             case "Name":
+    //                 try
+    //                 {
+    //                     existingPokemon.Name = value.ToString();
+    //                 }
+    //                 catch (Exception e)
+    //                 {
+    //                     throw new Exception($"The value cannot be converted in string value. {e.Message}");
+    //                 }
+    //
+    //                 break;
+    //             case "Defense":
+    //                 try
+    //                 {
+    //                     int baseStat = Convert.ToInt32(value);
+    //                     existingPokemon.Defense = baseStat;
+    //                 }
+    //                 catch (Exception e)
+    //                 {
+    //                     throw new Exception($"The value cannot be converted in int value. {e.Message}");
+    //                 }
+    //
+    //                 break;
+    //             case "Attack":
+    //                 try
+    //                 {
+    //                     var baseStat = Convert.ToInt32(value);
+    //                     existingPokemon.Attack = baseStat;
+    //                 }
+    //                 catch (Exception e)
+    //                 {
+    //                     throw new Exception($"The value cannot be converted in int value. {e.Message}");
+    //                 }
+    //
+    //                 break;
+    //             case "Hp":
+    //                 try
+    //                 {
+    //                     var baseStat = Convert.ToInt32(value);
+    //                     existingPokemon.Hp = baseStat;
+    //                 }
+    //                 catch (Exception e)
+    //                 {
+    //                     throw new Exception($"The value cannot be converted in int value. {e.Message}");
+    //                 }
+    //
+    //                 break;
+    //             case "SpecialDefense":
+    //                 try
+    //                 {
+    //                     var baseStat = Convert.ToInt32(value);
+    //                     existingPokemon.SpecialDefense = baseStat;
+    //                 }
+    //                 catch (Exception e)
+    //                 {
+    //                     throw new Exception($"The value cannot be converted in int value. {e.Message}");
+    //                 }
+    //
+    //                 break;
+    //             case "SpecialAttack":
+    //                 try
+    //                 {
+    //                     var baseStat = Convert.ToInt32(value);
+    //                     existingPokemon.SpecialAttack = baseStat;
+    //                 }
+    //                 catch (Exception e)
+    //                 {
+    //                     throw new Exception($"The value cannot be converted in int value. {e.Message}");
+    //                 }
+    //
+    //                 break;
+    //             case "Speed":
+    //                 try
+    //                 {
+    //                     var baseStat = Convert.ToInt32(value);
+    //                     existingPokemon.Defense = baseStat;
+    //                 }
+    //                 catch (Exception e)
+    //                 {
+    //                     throw new Exception($"The value cannot be converted in int value. {e.Message}");
+    //                 }
+    //
+    //                 break;
+    //         }
+    //
+    //         // existingPokemon.Name = pokemon.Name;
+    //         // existingPokemon.PokemonAbility = existingPokemon.PokemonAbility;
+    //         // existingPokemon.Attack = pokemon.Attack;
+    //         // existingPokemon.Defense = pokemon.Defense;
+    //         // existingPokemon.Hp = pokemon.Hp;
+    //         // existingPokemon.SpecialDefense = pokemon.SpecialDefense;
+    //         // existingPokemon.SpecialAttack = pokemon.SpecialAttack;
+    //         // existingPokemon.Speed = pokemon.Speed;
+    //         // existingPokemon.Types = pokemon.Types;
+    //
+    //         await _dbContext.SaveChangesAsync(token);
+    //         await _transactionService.CommitTransaction();
+    //     }
+    //     catch
+    //         (Exception e)
+    //     {
+    //         await _transactionService.RollbackTransaction();
+    //         throw new Exception($"Error: {e.Message}");
+    //     }
+    // }
+    // public async Task UpdateType(int id, string typeToChange, string newType, CancellationToken token)
+    // {
+    //     await _transactionService.BeginTransaction();
+    //     try
+    //     {
+    //         var existingPokemon = await GetByIdFromDb(id, token);
+    //         if (existingPokemon == null)
+    //         {
+    //             throw new Exception($"Pokemon id: {id} doesn't exists");
+    //         }
+    //
+    //         var matchType = existingPokemon.Types.FirstOrDefault(t => t.Name.ToLower() == typeToChange.ToLower());
+    //         if (matchType is null)
+    //         {
+    //             throw new Exception($"Pokemon type: {typeToChange} doesn't exists");
+    //         }
+    //
+    //         matchType.Name = newType;
+    //         await _dbContext.SaveChangesAsync(token);
+    //         await _transactionService.CommitTransaction();
+    //     }
+    //     catch (Exception e)
+    //     {
+    //         await _transactionService.RollbackTransaction();
+    //         throw new Exception($"Error updating stats. {e.Message}");
+    //     }
+    // }
+
+    public async Task UpdateStats(int id, string statName, int baseStat, PokemonDao pokemon,
+        CancellationToken token)
+    {
+        await _transactionService.BeginTransaction();
+        try
+        {
+            var existingPokemon = await GetByIdFromDb(id, token);
+            if (existingPokemon is null)
+            {
+                throw new Exception($"Pokemon id {id} doesn't exists");
+            }
+
+            switch (statName)
+            {
+                case "Attack":
+                    existingPokemon.Attack = baseStat;
+                    break;
+                case "Defense":
+                    existingPokemon.Defense = baseStat;
+                    break;
+                case "Hp":
+                    existingPokemon.Hp = baseStat;
+                    break;
+                case "SpecialDefense":
+                    existingPokemon.SpecialDefense = baseStat;
+                    break;
+                case "SpecialAttack":
+                    existingPokemon.SpecialAttack = baseStat;
+                    break;
+                case "Speed":
+                    existingPokemon.Speed = baseStat;
+                    break;
+            }
+
+            await _dbContext.SaveChangesAsync(token);
+            await _transactionService.CommitTransaction();
+        }
+        catch (Exception e)
+        {
+            await _transactionService.RollbackTransaction();
+            throw new Exception($"Error updating stats. {e.Message}");
+        }
+    }
 
     public async Task UpdateName(int id, PokemonDao pokemon, CancellationToken token)
     {
         await _transactionService.BeginTransaction();
         try
         {
-            var updatePokemon = await _dbContext.Pokemon
-                .Include(p => p.Types)
-                .Include(p => p.PokemonAbility)
-                .FirstOrDefaultAsync(x => x.Id == id, token);
+            var updatePokemon = await GetByIdFromDb(id, token);
             updatePokemon.Name = pokemon.Name;
             await _dbContext.SaveChangesAsync(token);
             await _transactionService.CommitTransaction();
@@ -212,4 +408,26 @@ public class PokemonService : IPokemonService
         }
     }
     //··········DELETE············
+
+    public async Task Delete(int id, CancellationToken token)
+    {
+        await _transactionService.BeginTransaction();
+        try
+        {
+            var pokemonToDelete = await GetByIdFromDb(id, token);
+            if (pokemonToDelete == null)
+            {
+                throw new Exception($"Pokemon id {id} doesn't exists.");
+            }
+
+            _dbContext.Pokemon.Remove(pokemonToDelete);
+            await _dbContext.SaveChangesAsync(token);
+            await _transactionService.CommitTransaction();
+        }
+        catch (Exception e)
+        {
+            await _transactionService.RollbackTransaction();
+            throw new Exception($"Error {e.Message}");
+        }
+    }
 }

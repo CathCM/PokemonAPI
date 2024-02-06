@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using PokemonAPI.Models;
 using PokemonAPI.Services;
@@ -100,27 +101,42 @@ public class PokemonController : ControllerBase
 //
 //     //··········PUT············
 //
-//     [HttpPut("{id}")]
-//     public ActionResult Update(int id, [FromBody] Pokemon pokemonUpdate) => Ok();
+    // [HttpPut("{id:int}")]
+    // public async Task<ActionResult> Update(int id, string property, [FromBody] PokemonDao pokemonUpdate, CancellationToken token)
+    // {
+    //     await _pokemonService.Update(id, property, value, pokemonUpdate, token);
+    //     return Ok();
+    // }
 //
-     [HttpPut("{id}/name")]
-     public async Task<ActionResult> UpdateName(int id, [FromBody] PokemonDao pokemon, CancellationToken token)
-     {
-             await _pokemonService.UpdateName(id, pokemon, token);
-             return Ok();
-     }
+    [HttpPut("{id}/name")]
+    public async Task<ActionResult> UpdateName(int id, [FromBody] PokemonDao pokemon, CancellationToken token)
+    {
+        await _pokemonService.UpdateName(id, pokemon, token);
+        return Ok();
+    }
+
 //
 //     [HttpPut("{id}/ability/{ability}/{isHidden}")]
 //     public ActionResult UpdateAbility(int id, [FromBody] Pokemon pokemonUpdateAbility) => Ok();
 //
-//     [HttpPut("{id}/stats/{statName}/{baseStat}")]
-//     public ActionResult UpdateStat(int id, [FromBody] Pokemon pokemonUpdateStat) => Ok();
+    [HttpPut("{id:int}/stats/{statName}/{baseStat:int}")]
+    public async Task<ActionResult> UpdateStat(int id, string statName, int baseStat, [FromBody] PokemonDao pokemon,
+        CancellationToken token)
+    {
+        await _pokemonService.UpdateStats(id, statName, baseStat, pokemon, token);
+        return Ok();
+    }
+
 //
 //
 //     //··········DELETE············
 //
-//     [HttpDelete("{id}")]
-//     public ActionResult Delete(int id) => Ok();
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> Delete(int id, CancellationToken token)
+    {
+        await _pokemonService.Delete(id, token);
+        return Ok();
+    }
 //
 //     [HttpDelete("{id}/ability")]
 //     public ActionResult DeleteAllAbilities(int id) => Ok();
