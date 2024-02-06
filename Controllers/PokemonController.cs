@@ -152,7 +152,12 @@ public class PokemonController : ControllerBase
         return Ok();
     }
 
-  
+    [HttpDelete("{id}/type/{type}")]
+    public async Task<ActionResult> DeleteType(int id, string type, CancellationToken token)
+    {
+        await _pokemonService.DeleteType(id, type, token);
+        return Ok();
+    }
 
 
 

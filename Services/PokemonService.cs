@@ -481,4 +481,38 @@ public class PokemonService : IPokemonService
             throw new Exception($"Error deleting ability {ability}.");
         }
     }
+    public async Task DeleteType(int id, string type, CancellationToken token)
+    {
+        await _transactionService.BeginTransaction();
+        try
+        {
+            var pokemon = await GetByIdFromDb(id, token);
+            if (pokemon is null)
+            {
+                throw new Exception($"Pokemon id {id} doesn't exists.");
+            }
+
+            if (pokemon.Types.Count == 1)
+            {
+
+                throw new Exception("Pokemon must belong to at least one type.");
+            }
+
+            var typeToDelete =
+                pokemon.Types.FirstOrDefault(a => a.Name.ToLower() == type.ToLower());
+            if (typeToDelete is null)
+            {
+                throw new Exception($"Type {type} doesn't exists for pokemon {pokemon.Name}.");
+            }
+
+            _dbContext.Types.Remove(typeToDelete);
+            await _dbContext.SaveChangesAsync(token);
+            await _transactionService.CommitTransaction();
+        }
+        catch (Exception e)
+        {
+            await _transactionService.RollbackTransaction();
+            throw new Exception($"Error deleting type {type}. {e.Message}");
+        }
+    }
 }
