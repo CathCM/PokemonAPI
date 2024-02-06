@@ -26,7 +26,7 @@ public interface IPokemonService
     // //··········Delete············
     Task Delete(int id, CancellationToken token);
     Task DeleteAbilities(int id, CancellationToken token);
-    // Task DeleteAbility(int id, string ability, CancellationToken token);
+    Task DeleteAbility(int id, string ability, CancellationToken token);
     // Task DeleteType(int id, string type, CancellationToken token);
     //
 }

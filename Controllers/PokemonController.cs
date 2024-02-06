@@ -144,14 +144,17 @@ public class PokemonController : ControllerBase
         await _pokemonService.DeleteAbilities(id, token);
         return Ok();
     }
-//
-//     [HttpDelete("{id}/ability/{ability}")]
-//     public ActionResult DeleteAbility(int id, string ability) => Ok();
-//
-//     [HttpDelete("{id}/type/{type}")]
-//     public ActionResult DeleteType(int id, string type) => Ok();
-//
-//
+
+    [HttpDelete("{id}/ability/{ability}")]
+    public async Task<ActionResult> DeleteAbility(int id, string ability, CancellationToken token)
+    {
+        await _pokemonService.DeleteAbility(id, ability, token);
+        return Ok();
+    }
+
+  
+
+
 
 
 // {
